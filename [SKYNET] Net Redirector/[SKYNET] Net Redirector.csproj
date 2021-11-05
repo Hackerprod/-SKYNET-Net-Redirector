@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5A19D7DD-8527-443D-A6D8-4AEA28833823}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SKYNET</RootNamespace>
+    <AssemblyName>[SKYNET] Net Redirector</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EasyHook">
+      <HintPath>..\..\..\..\..\Juegos\steam-loader\EasyHook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUI\Controls\HexBox\ByteCollection.cs" />
+    <Compile Include="GUI\Controls\HexBox\BytePositionInfo.cs" />
+    <Compile Include="GUI\Controls\HexBox\DataBlock.cs" />
+    <Compile Include="GUI\Controls\HexBox\DataMap.cs" />
+    <Compile Include="GUI\Controls\HexBox\Design\HexFontEditor.cs" />
+    <Compile Include="GUI\Controls\HexBox\DynamicByteProvider.cs" />
+    <Compile Include="GUI\Controls\HexBox\DynamicFileByteProvider.cs" />
+    <Compile Include="GUI\Controls\HexBox\FileByteProvider.cs" />
+    <Compile Include="GUI\Controls\HexBox\FileDataBlock.cs" />
+    <Compile Include="GUI\Controls\HexBox\HexBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\HexBox\HexCasing.cs" />
+    <Compile Include="GUI\Controls\HexBox\IByteProvider.cs" />
+    <Compile Include="GUI\Controls\HexBox\MemoryDataBlock.cs" />
+    <Compile Include="GUI\Controls\HexBox\NativeMethods.cs" />
+    <Compile Include="GUI\Controls\HexBox\ReplayEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\HexBox\ReplayEditor.designer.cs">
+      <DependentUpon>ReplayEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\ModuleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\ModuleControl.Designer.cs">
+      <DependentUpon>ModuleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_ShadowBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_ShadowBox.designer.cs">
+      <DependentUpon>SKYNET_ShadowBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_TabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_TextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_TextBox.designer.cs">
+      <DependentUpon>SKYNET_TextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DwmApi.cs" />
+    <Compile Include="GUI\frmBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmBase.designer.cs">
+      <DependentUpon>frmBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmDumps.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmDumps.Designer.cs">
+      <DependentUpon>frmDumps.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmDumpViewer - Copy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmDumpViewer - Copy.Designer.cs">
+      <DependentUpon>frmDumpViewer - Copy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmFunctions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmFunctions.Designer.cs">
+      <DependentUpon>frmFunctions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmProcessInjector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmProcessInjector.Designer.cs">
+      <DependentUpon>frmProcessInjector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmModules.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmModules.Designer.cs">
+      <DependentUpon>frmModules.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\RegistrySettings.cs" />
+    <Compile Include="Helpers\ShellManager.cs" />
+    <Compile Include="Helpers\IniParser.cs" />
+    <Compile Include="GUI\Controls\SKYNET_ContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_Button.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\InternetExplorerBrowserEmulation.cs" />
+    <Compile Include="GUI\Controls\SKYNET_Check.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_Check.designer.cs">
+      <DependentUpon>SKYNET_Check.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_CloseBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_CloseBox.designer.cs">
+      <DependentUpon>SKYNET_CloseBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_MinimizeBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_MinimizeBox.designer.cs">
+      <DependentUpon>SKYNET_MinimizeBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_WebLogger.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Controls\SKYNET_WebLogger.designer.cs">
+      <DependentUpon>SKYNET_WebLogger.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DumpManager.cs" />
+    <Compile Include="GUI\frmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmSettings.Designer.cs">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IconExtractor\IconExtractor.cs" />
+    <Compile Include="IconExtractor\IconUtil.cs" />
+    <Compile Include="IconExtractor\NativeMethods.cs" />
+    <Compile Include="MemoryHelper\Additions\ExportTableInfo.cs" />
+    <Compile Include="MemoryHelper\Additions\MemoryIO.cs" />
+    <Compile Include="MemoryHelper\Additions\MemoryManagement.cs" />
+    <Compile Include="MemoryHelper\Additions\ModuleInfo.cs" />
+    <Compile Include="MemoryHelper\Additions\ProcessInfo.cs" />
+    <Compile Include="MemoryHelper\Additions\ProcessUtils.cs" />
+    <Compile Include="MemoryHelper\NativeEnvironment.cs" />
+    <Compile Include="MemoryHelper\NativeMethods.cs" />
+    <Compile Include="MemoryHelper\NativeModule.cs" />
+    <Compile Include="MemoryHelper\NativeProcess.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GUI\Controls\HexBox\ReplayEditor.resx">
+      <DependentUpon>ReplayEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\ModuleControl.resx">
+      <DependentUpon>ModuleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_Check.resx">
+      <DependentUpon>SKYNET_Check.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_CloseBox.resx">
+      <DependentUpon>SKYNET_CloseBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_MinimizeBox.resx">
+      <DependentUpon>SKYNET_MinimizeBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_ShadowBox.resx">
+      <DependentUpon>SKYNET_ShadowBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_TextBox.resx">
+      <DependentUpon>SKYNET_TextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Controls\SKYNET_WebLogger.resx">
+      <DependentUpon>SKYNET_WebLogger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmBase.resx">
+      <DependentUpon>frmBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmDumps.resx">
+      <DependentUpon>frmDumps.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmDumpViewer - Copy.resx">
+      <DependentUpon>frmDumpViewer - Copy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmFunctions.resx">
+      <DependentUpon>frmFunctions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmProcessInjector.resx">
+      <DependentUpon>frmProcessInjector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmModules.resx">
+      <DependentUpon>frmModules.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmSettings.resx">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\minimise.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\b_On.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\b_Off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="convertor_pro_udell.ico" />
+    <Content Include="Logo.ico" />
+    <None Include="Resources\1 %2812%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SKYNET.Detour\SKYNET.Detour.csproj">
+      <Project>{56E2B77D-34B9-496D-8420-6FFB4B851686}</Project>
+      <Name>SKYNET.Detour</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
