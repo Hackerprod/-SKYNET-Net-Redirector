@@ -341,12 +341,9 @@ namespace SKYNET
             File.WriteAllText(_iniPath, config.ToString());
             return config.ToString();
         }
-
-
-
         private void B_Close_Clicked(object sender, EventArgs e)
         {
-            Application.Exit();
+            Application.Exit(); 
         }
 
         private void B_Minimize_Clicked(object sender, EventArgs e)

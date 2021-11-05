@@ -125,9 +125,7 @@ namespace SKYNET.Hook.Processor
                 default:
                     return 0;
             }
-
         }
-
     }
     internal enum CertificateProblem
     {
