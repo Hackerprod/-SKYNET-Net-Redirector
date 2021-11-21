@@ -58,16 +58,17 @@ namespace SKYNET.Controls
             set
             {
                 backColor = value;
-                panel1.BackColor = value;
+                PN_Top.BackColor = value;
                 panel2.BackColor = value;
                 panel3.BackColor = value;
                 panel4.BackColor = value;
-                P_Container.BackColor = value;
+                PN_Container.BackColor = value;
                 textBox.BackColor = backColor;
                 textBox.Refresh();
             }
         }
         private Color backColor;
+
         [Category("SKYNET")]
         public Color Color
         {
@@ -107,6 +108,7 @@ namespace SKYNET.Controls
             }
         }
         bool _ShowLogo = true;
+
         [Category("SKYNET")]
         public Image Logo
         {

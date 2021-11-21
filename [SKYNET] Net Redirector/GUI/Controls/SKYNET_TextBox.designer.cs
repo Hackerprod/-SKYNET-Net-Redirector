@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.P_Container = new System.Windows.Forms.Panel();
+            this.PN_Container = new System.Windows.Forms.Panel();
             this.textBox = new System.Windows.Forms.TextBox();
             this.logo_box = new System.Windows.Forms.PictureBox();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -36,25 +36,25 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.PN_Top = new System.Windows.Forms.Panel();
             this.Container = new System.Windows.Forms.Panel();
-            this.P_Container.SuspendLayout();
+            this.PN_Container.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logo_box)).BeginInit();
             this.Container.SuspendLayout();
             this.SuspendLayout();
             // 
-            // P_Container
+            // PN_Container
             // 
-            this.P_Container.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.P_Container.Controls.Add(this.textBox);
-            this.P_Container.Controls.Add(this.logo_box);
-            this.P_Container.Controls.Add(this.panel4);
-            this.P_Container.Controls.Add(this.panel3);
-            this.P_Container.Controls.Add(this.panel2);
-            this.P_Container.Controls.Add(this.PN_Top);
-            this.P_Container.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.P_Container.Location = new System.Drawing.Point(1, 1);
-            this.P_Container.Name = "P_Container";
-            this.P_Container.Size = new System.Drawing.Size(218, 33);
-            this.P_Container.TabIndex = 0;
+            this.PN_Container.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.PN_Container.Controls.Add(this.textBox);
+            this.PN_Container.Controls.Add(this.logo_box);
+            this.PN_Container.Controls.Add(this.panel4);
+            this.PN_Container.Controls.Add(this.panel3);
+            this.PN_Container.Controls.Add(this.panel2);
+            this.PN_Container.Controls.Add(this.PN_Top);
+            this.PN_Container.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PN_Container.Location = new System.Drawing.Point(1, 1);
+            this.PN_Container.Name = "PN_Container";
+            this.PN_Container.Size = new System.Drawing.Size(218, 33);
+            this.PN_Container.TabIndex = 0;
             // 
             // textBox
             // 
@@ -123,7 +123,7 @@
             // 
             // Container
             // 
-            this.Container.Controls.Add(this.P_Container);
+            this.Container.Controls.Add(this.PN_Container);
             this.Container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Container.Location = new System.Drawing.Point(0, 0);
             this.Container.Name = "Container";
@@ -137,8 +137,8 @@
             this.Controls.Add(this.Container);
             this.Name = "SKYNET_TextBox";
             this.Size = new System.Drawing.Size(220, 35);
-            this.P_Container.ResumeLayout(false);
-            this.P_Container.PerformLayout();
+            this.PN_Container.ResumeLayout(false);
+            this.PN_Container.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logo_box)).EndInit();
             this.Container.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -147,7 +147,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel P_Container;
+        private System.Windows.Forms.Panel PN_Container;
         private System.Windows.Forms.Panel PN_Top;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;

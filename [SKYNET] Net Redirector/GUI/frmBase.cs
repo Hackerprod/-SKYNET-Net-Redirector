@@ -1,28 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace SKYNET.GUI
 {
     public partial class frmBase : Form
     {
-        private bool mouseDown;     
-        private Point lastLocation; 
+        private bool mouseDown;
+        private Point lastLocation;
+        private Color _backColor;
 
+        [Category("SKYNET")]
+        public bool BlurEffect 
+        {
+            get { return _blur; }
+            set 
+            {
+                _blur = value;
+                if (value)
+                {
+                    BackColor = Color.Azure;
+                    TransparencyKey = Color.Azure;
+                    EnableBlur();
+                }
+                else
+                {
+                    BackColor = _backColor;
+                }
+            }
+        }
+        private bool _blur;
+
+        public override Color BackColor
+        {
+            get
+            {
+                return base.BackColor;
+            }
+            set
+            {
+                base.BackColor = value;
+                if (BackColor != Color.Azure)
+                {
+                    _backColor = BackColor;
+                }
+            }
+        }
         public frmBase()
         {
             InitializeComponent();
+
         }
         //public virtual void ApplyTheme(ColorTheme theme)
         //{
 
         //}
+        private void EnableBlur()
+        {
+            var accent = new AccentPolicy();
+            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            var accentStructSize = Marshal.SizeOf(accent);
+            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
+            Marshal.StructureToPtr(accent, accentPtr, false);
+            var Data = new WindowCompositionAttributeData();
+            Data.Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY;
+            Data.SizeOfData = accentStructSize;
+            Data.Data = accentPtr;
+            SetWindowCompositionAttribute(this.Handle, ref Data);
+            Marshal.FreeHGlobal(accentPtr);
+        }
         public virtual void LoadLanguage()
         {
 
@@ -54,5 +102,29 @@ namespace SKYNET.GUI
             mouseDown = false;
         }
 
+        [DllImport("user32.dll")]
+        static internal extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+
+        enum AccentState
+        {
+            ACCENT_ENABLE_BLURBEHIND = 3
+        }
+        struct AccentPolicy
+        {
+            public AccentState AccentState;
+            public int AccentFlag;
+            public int GradientColor;
+            public int AnimationId;
+        }
+        internal struct WindowCompositionAttributeData
+        {
+            public WindowCompositionAttribute Attribute;
+            public IntPtr Data;
+            public int SizeOfData;
+        }
+        internal enum WindowCompositionAttribute
+        {
+            WCA_ACCENT_POLICY = 19
+        }
     }
 }

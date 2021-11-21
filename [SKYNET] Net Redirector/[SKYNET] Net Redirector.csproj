@@ -143,6 +143,9 @@
     <Compile Include="GUI\frmModules.Designer.cs">
       <DependentUpon>frmModules.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Controls\SKYNET_Label.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Helpers\RegistrySettings.cs" />
     <Compile Include="Helpers\ShellManager.cs" />
     <Compile Include="Helpers\IniParser.cs" />

@@ -7,6 +7,7 @@ using Steamworks;
 
 public class SteamAPI_ISteamClient : BaseCalls
 {
+
     //public SteamAPI_ISteamClient()
     //{
 

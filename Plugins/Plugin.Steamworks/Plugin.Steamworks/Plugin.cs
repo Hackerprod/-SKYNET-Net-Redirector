@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using SKYNET.Hook;
 using SKYNET.Hook.Processor;
-using Valve.Steamworks;
 
 namespace SKYNET
 {
@@ -17,7 +16,10 @@ namespace SKYNET
         public Main Main { get; set; }
         public List<IHook> Hooks { get; set; }
 
-        private bool Initialized;
+        public static bool Initialized;
+
+        private SteamAPI _SteamAPI;
+
         public void Dispose()
         {
             
@@ -29,32 +31,29 @@ namespace SKYNET
             HookInterface = Interface;
             Hooks = new List<IHook>();
 
-            Initialized = TryInitializeHooks();
-        }
-
-        private bool TryInitializeHooks()
-        {
             Write("Creating steamworks hooks ");
-            new SteamAPI();
-            new SteamAPI_ISteamClient();
-            new Steam_GameServer();
-            new SteamAPI_ISteamHTTP();
-            new SteamInternal();
-            return true;
-        }
+            Initialized = false;
 
-        public static void Write(object Msg)
-        {
-            Main.Write("STEAMWORKS", $"{Msg}", Color.BurlyWood);
-
+            _SteamAPI = new SteamAPI();
         }
 
         public void ModuleLoaded(string module)
         {
-            if (module.StartsWith("STEAM_API") && !Initialized)
+            if (module.StartsWith("STEAM_API"))
             {
-                Initialized = TryInitializeHooks();
+                Write("dddddddddddddddddddddd");
+                _SteamAPI.Initialize();
+            }
+            //_SteamAPI.Initialize();
+        }
+        public static void Write(object Msg)
+        {
+            if (Msg.ToString() != _lastMsg)
+            {
+                Main.Write("STEAMWORKS", $"{Msg}", Color.BurlyWood);
+                _lastMsg = Msg.ToString();
             }
         }
+        private static string _lastMsg;
     }
 }

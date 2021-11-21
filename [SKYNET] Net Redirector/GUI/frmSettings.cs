@@ -80,7 +80,12 @@ namespace SKYNET
 
         private void Path_Click(object sender, EventArgs e)
         {
-            OpenFileDialog oDialog = new OpenFileDialog();
+            OpenFileDialog oDialog = new OpenFileDialog()
+            {
+                Title = "Select executable file",
+                Filter = "Executable file | *.exe",
+                Multiselect = false,
+            };
             oDialog.InitialDirectory = LB_Path.Text;
             DialogResult result = oDialog.ShowDialog();
             if (result == DialogResult.OK)

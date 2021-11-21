@@ -5,12 +5,14 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using SKYNET;
+using SKYNET.SteamApi;
 using Steamworks;
-using Valve.Interop;
 
 public class SteamAPI : BaseCalls
 {
+
     public delegate bool SteamAPI_InitDelegate();
     public delegate void SteamAPI_RunCallbacksDelegate();
     public delegate void SteamAPI_ShutdownDelegate(IntPtr pContextInitData);
@@ -77,23 +79,17 @@ public class SteamAPI : BaseCalls
     public g_pSteamClientGameServerDelegate _g_pSteamClientGameServer;
     //public xxxDelegate _xxx;
 
-    [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
-    private delegate bool SteamAPI_Init();
-    [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
-    private delegate bool SteamAPI_IsSteamRunning();
 
-    public SteamAPI()
+    public void Initialize()
     {
-        InstallDelegate("SteamAPI_Init", new SteamAPI_Init(Init));
-        InstallDelegate("SteamAPI_IsSteamRunning", new SteamAPI_IsSteamRunning(IsSteamRunning));
-
-        ////base.InstallDelegate<SteamAPI_InitDelegate>("SteamAPI_Init", new SteamAPI_InitDelegate(SteamAPI_Init), _SteamAPI_Init);
-        //base.InstallDelegate<SteamAPI_RunCallbacksDelegate>("SteamAPI_RunCallbacks", new SteamAPI_RunCallbacksDelegate(SteamAPI_RunCallbacks), _SteamAPI_RunCallbacks);
+        base.InstallDelegate<SteamAPI_InitDelegate>("SteamAPI_Init", new SteamAPI_InitDelegate(SteamAPI_Init), _SteamAPI_Init);
+        base.InstallDelegate<SteamAPI_IsSteamRunningDelegate>("SteamAPI_IsSteamRunning", new SteamAPI_IsSteamRunningDelegate(SteamAPI_IsSteamRunning), _SteamAPI_IsSteamRunning);
+        base.InstallDelegate<SteamAPI_RunCallbacksDelegate>("SteamAPI_RunCallbacks", new SteamAPI_RunCallbacksDelegate(SteamAPI_RunCallbacks), _SteamAPI_RunCallbacks);
+        
         //base.InstallDelegate<SteamAPI_ShutdownDelegate>("SteamAPI_Shutdown", new SteamAPI_ShutdownDelegate(SteamAPI_Shutdown), _SteamAPI_Shutdown);
         //base.InstallDelegate<SteamAPI_RegisterCallbackDelegate>("SteamAPI_RegisterCallback", new SteamAPI_RegisterCallbackDelegate(SteamAPI_RegisterCallback), _SteamAPI_RegisterCallback);
         //base.InstallDelegate<SteamAPI_InitSafeDelegate>("SteamAPI_InitSafe", new SteamAPI_InitSafeDelegate(SteamAPI_InitSafe), _SteamAPI_InitSafe);
         //base.InstallDelegate<SteamAPI_InitAnonymousUserDelegate>("SteamAPI_InitAnonymousUser", new SteamAPI_InitAnonymousUserDelegate(SteamAPI_InitAnonymousUser), _SteamAPI_InitAnonymousUser);
-        ////base.InstallDelegate<SteamAPI_IsSteamRunningDelegate>("SteamAPI_IsSteamRunning", new SteamAPI_IsSteamRunningDelegate(SteamAPI_IsSteamRunning), _SteamAPI_IsSteamRunning);
         //base.InstallDelegate<SteamAPI_RestartAppIfNecessaryDelegate>("SteamAPI_RestartAppIfNecessary", new SteamAPI_RestartAppIfNecessaryDelegate(SteamAPI_RestartAppIfNecessary), _SteamAPI_RestartAppIfNecessary);
         //base.InstallDelegate<SteamAPI_GetSteamInstallPathDelegate>("SteamAPI_GetSteamInstallPath", new SteamAPI_GetSteamInstallPathDelegate(SteamAPI_GetSteamInstallPath), _SteamAPI_GetSteamInstallPath);
         //base.InstallDelegate<SteamAPI_GetHSteamPipeDelegate>("SteamAPI_GetHSteamPipe", new SteamAPI_GetHSteamPipeDelegate(SteamAPI_GetHSteamPipe), _SteamAPI_GetHSteamPipe);
@@ -102,7 +98,7 @@ public class SteamAPI : BaseCalls
         //base.InstallDelegate<GetHSteamUserDelegate>("GetHSteamUser", new GetHSteamUserDelegate(GetHSteamUser), _GetHSteamUser);
         //base.InstallDelegate<SteamClientDelegate>("SteamClient", new SteamClientDelegate(SteamClient), _SteamClient);
 
-        ////base.InstallDelegate<Internal_CreateInterfaceDelegate>("Internal_CreateInterface", new Internal_CreateInterfaceDelegate(Internal_CreateInterface), _Internal_CreateInterface);
+        //base.InstallDelegate<Internal_CreateInterfaceDelegate>("Internal_CreateInterface", new Internal_CreateInterfaceDelegate(Internal_CreateInterface), _Internal_CreateInterface);
         ////base.InstallDelegate<SteamAPI_SetTryCatchCallbacksDelegate>("SteamAPI_SetTryCatchCallbacks", new SteamAPI_SetTryCatchCallbacksDelegate(SteamAPI_SetTryCatchCallbacks), _SteamAPI_SetTryCatchCallbacks);
         ////base.InstallDelegate<SteamAPI_SetBreakpadAppIDDelegate>("SteamAPI_SetBreakpadAppID", new SteamAPI_SetBreakpadAppIDDelegate(SteamAPI_SetBreakpadAppID), _SteamAPI_SetBreakpadAppID);
         ////base.InstallDelegate<SteamAPI_UseBreakpadCrashHandlerDelegate>("SteamAPI_UseBreakpadCrashHandler", new SteamAPI_UseBreakpadCrashHandlerDelegate(SteamAPI_UseBreakpadCrashHandler), _SteamAPI_UseBreakpadCrashHandler);
@@ -120,37 +116,25 @@ public class SteamAPI : BaseCalls
         ////base.InstallDelegate<SteamAPI_gameserveritem_t_SetNameDelegate>("SteamAPI_gameserveritem_t_SetName", new SteamAPI_gameserveritem_t_SetNameDelegate(SteamAPI_gameserveritem_t_SetName), _SteamAPI_gameserveritem_t_SetName);
         //base.InstallDelegate<g_pSteamClientGameServerDelegate>("g_pSteamClientGameServer", new g_pSteamClientGameServerDelegate(g_pSteamClientGameServer), _g_pSteamClientGameServer);
         ////base.InstallDelegate<xxxDelegate>("xxx", new xxxDelegate(xxx), _xxx);
-
-
     }
 
-    private bool Init()
+    public bool SteamAPI_Init()
     {
-        //modCommon.Show("SteamAPI_Init");
-        PRINT_DEBUG($"SteamAPI_Init");
-        return true;
+        bool result = SteamAPIInterop.SteamAPI_Init();
+        PRINT_DEBUG($"SteamAPI_Init {result}");
+        return result;
     }
-    private bool IsSteamRunning()
+    private bool SteamAPI_IsSteamRunning()
     {
-        //modCommon.Show("SteamAPI_IsSteamRunning");
-        Write("SteamAPI_IsSteamRunning\n");
-        return true;
+        var response = SteamAPIInterop.SteamAPI_IsSteamRunning();
+        Write($"SteamAPI_IsSteamRunning {response}");
+        return response;
     }
-
-    //public bool SteamAPI_Init()
-    //{
-    //    PRINT_DEBUG($"SteamAPI_Init");
-
-    //    bool result = _SteamAPI_Init();
-    //    PRINT_DEBUG($"SteamAPI_Init {result}");
-
-    //    return result;
-    //}
 
     public void SteamAPI_RunCallbacks()
     {
-        _SteamAPI_RunCallbacks();
         PRINT_DEBUG($"SteamAPI_RunCallbacks");
+        SteamAPIInterop.SteamAPI_RunCallbacks();
     }
 
     public void SteamAPI_Shutdown(IntPtr pContextInitData)
@@ -166,15 +150,15 @@ public class SteamAPI : BaseCalls
         int base_callback = (iCallback / 100) * 100;
         int callback_id = iCallback % 100;
 
-        callMessage += $"{(CallbackType)base_callback} {callback_id}";
+        callMessage += $"[{callback_id}] {(CallbackType)base_callback} ";
 
         PRINT_DEBUG(callMessage);
-        _SteamAPI_RegisterCallback(pCallback, iCallback);
+        SteamAPIInterop.SteamAPI_RegisterCallback(pCallback, iCallback);
     }
 
     public bool SteamAPI_InitSafe()
     {
-        bool result = _SteamAPI_InitSafe();
+        bool result = SteamAPIInterop.SteamAPI_InitSafe();
         PRINT_DEBUG($"SteamAPI_InitSafe {result}");
 
         return result;
@@ -182,23 +166,15 @@ public class SteamAPI : BaseCalls
 
     public bool SteamAPI_InitAnonymousUser()
     {
-        bool result = _SteamAPI_InitAnonymousUser();
+        bool result = SteamAPIInterop.SteamAPI_InitAnonymousUser();
         PRINT_DEBUG($"SteamAPI_InitAnonymousUser {result}");
 
         return result;
     }
 
-    //public bool SteamAPI_IsSteamRunning()
-    //{
-    //    bool result = _SteamAPI_IsSteamRunning();
-    //    PRINT_DEBUG($"SteamAPI_IsSteamRunning {result}");
-
-    //    return result;
-    //}
-
     public bool SteamAPI_RestartAppIfNecessary(uint appId)
     {
-        bool result = _SteamAPI_RestartAppIfNecessary(appId);
+        bool result = SteamAPIInterop.SteamAPI_RestartAppIfNecessary(appId);
         PRINT_DEBUG($"SteamAPI_RestartAppIfNecessary {result}");
 
         return result;
@@ -206,15 +182,14 @@ public class SteamAPI : BaseCalls
 
     public string SteamAPI_GetSteamInstallPath()
     {
-        string result = _SteamAPI_GetSteamInstallPath();
+        string result = SteamAPIInterop.SteamAPI_GetSteamInstallPath();
         PRINT_DEBUG($"SteamAPI_GetSteamInstallPath {result}");
-
         return result;
     }
 
     public int SteamAPI_GetHSteamPipe()
     {
-        int result = _SteamAPI_GetHSteamPipe();
+        int result = SteamAPIInterop.SteamAPI_GetHSteamPipe();
         PRINT_DEBUG($"SteamAPI_GetHSteamPipe {result}");
 
         return result;
@@ -222,17 +197,8 @@ public class SteamAPI : BaseCalls
 
     public int SteamAPI_GetHSteamUser()
     {
-        int result = _SteamAPI_GetHSteamUser();
+        int result = SteamAPIInterop.SteamAPI_GetHSteamUser();
         PRINT_DEBUG($"SteamAPI_GetHSteamUser {result}");
-
-        return result;
-    }
-
-    public int GetHSteamPipe()
-    {
-        int result = _GetHSteamPipe();
-        PRINT_DEBUG($"GetHSteamPipe {result}");
-
         return result;
     }
 
@@ -246,7 +212,7 @@ public class SteamAPI : BaseCalls
 
     public IntPtr SteamClient()
     {
-        IntPtr result = _SteamClient();
+        IntPtr result = SteamAPIInterop.SteamClient();
         PRINT_DEBUG($"SteamClient {result}");
 
         return result;
