@@ -3,4 +3,6 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/Hackerprod/-SKYNET-Net-Redirector/total?style=plastic)
 ![GitHub](https://img.shields.io/github/issues/Hackerprod/-SKYNET-Net-Redirector)
 
-Redirect network traffic for injected application
+## Redirect network traffic for injected application
+
+![Screenshot](screenshot.png)
