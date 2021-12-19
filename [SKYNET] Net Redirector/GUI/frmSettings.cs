@@ -29,6 +29,7 @@ namespace SKYNET
             frm = this;
             CheckForIllegalCrossThreadCalls = false;
             base.SetMouseMove(P_Top);
+            base.EnableShadows = true;
         }
         private void FrmMain_Load(object sender, EventArgs e)
         {
@@ -63,19 +64,6 @@ namespace SKYNET
         private void B_Close_Clicked(object sender, EventArgs e)
         {
             Close();
-        }
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            int attrValue = 2;
-            DwmApi.DwmSetWindowAttribute(base.Handle, 2, ref attrValue, 16);
-            DwmApi.MARGINS mARGINS = default(DwmApi.MARGINS);
-            mARGINS.cyBottomHeight = 1;
-            mARGINS.cxLeftWidth = 0;
-            mARGINS.cxRightWidth = 0;
-            mARGINS.cyTopHeight = 0;
-            DwmApi.MARGINS marInset = mARGINS;
-            DwmApi.DwmExtendFrameIntoClientArea(base.Handle, ref marInset);
         }
 
         private void Path_Click(object sender, EventArgs e)

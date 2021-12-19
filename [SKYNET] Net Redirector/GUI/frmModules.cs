@@ -14,6 +14,7 @@ using Be.Windows.Forms;
 using EasyHook;
 using NativeSharp;
 using SKYNET.Controls;
+using SKYNET.GUI;
 using SKYNET.GUI.Controls;
 using SKYNET.Helper;
 using SKYNET.Hook.Types;
@@ -21,7 +22,7 @@ using SKYNET.Types;
 
 namespace SKYNET
 {
-    public partial class frmModules : Form
+    public partial class frmModules : frmBase
     {
         public static frmModules frm;
         private Process Process;
@@ -33,6 +34,7 @@ namespace SKYNET
             frm = this;
             CheckForIllegalCrossThreadCalls = false;
             Process = process;
+            base.EnableShadows = true;
         }
         private void FrmModules_Shown(object sender, EventArgs e)
         {
@@ -54,8 +56,6 @@ namespace SKYNET
         private void ShowPanelDialog()
         {
             PN_ModuleContainer.Visible = false;
-
-
         }
 
         private void LoadModules(string word)
@@ -93,19 +93,6 @@ namespace SKYNET
         private void B_Close_Clicked(object sender, EventArgs e)
         {
             Close();
-        }
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            int attrValue = 2;
-            DwmApi.DwmSetWindowAttribute(base.Handle, 2, ref attrValue, 16);
-            DwmApi.MARGINS mARGINS = default(DwmApi.MARGINS);
-            mARGINS.cyBottomHeight = 1;
-            mARGINS.cxLeftWidth = 0;
-            mARGINS.cxRightWidth = 0;
-            mARGINS.cyTopHeight = 0;
-            DwmApi.MARGINS marInset = mARGINS;
-            DwmApi.DwmExtendFrameIntoClientArea(base.Handle, ref marInset);
         }
         private void TB_SearchClicked(object sender, EventArgs e)
         {

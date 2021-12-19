@@ -31,7 +31,10 @@ namespace SKYNET
             InitializeComponent();
             frm = this;
             CheckForIllegalCrossThreadCalls = false;
+
             base.SetMouseMove(P_Top);
+            base.EnableShadows = true;
+
             NetMessage = msg;
 
             DynamicByteProvider byteProvider = new DynamicByteProvider(NetMessage.Body);
@@ -89,19 +92,6 @@ namespace SKYNET
         }
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-        }
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            int attrValue = 2;
-            DwmApi.DwmSetWindowAttribute(base.Handle, 2, ref attrValue, 16);
-            DwmApi.MARGINS mARGINS = default(DwmApi.MARGINS);
-            mARGINS.cyBottomHeight = 1;
-            mARGINS.cxLeftWidth = 0;
-            mARGINS.cxRightWidth = 0;
-            mARGINS.cyTopHeight = 0;
-            DwmApi.MARGINS marInset = mARGINS;
-            DwmApi.DwmExtendFrameIntoClientArea(base.Handle, ref marInset);
         }
     }
 }

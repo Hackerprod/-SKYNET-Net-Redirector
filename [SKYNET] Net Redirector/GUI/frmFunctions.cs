@@ -14,6 +14,7 @@ using Be.Windows.Forms;
 using EasyHook;
 using NativeSharp;
 using SKYNET.Controls;
+using SKYNET.GUI;
 using SKYNET.GUI.Controls;
 using SKYNET.Helper;
 using SKYNET.Hook.Types;
@@ -21,7 +22,7 @@ using SKYNET.Types;
 
 namespace SKYNET
 {
-    public partial class frmFunctions : Form
+    public partial class frmFunctions : frmBase
     {
         public static frmFunctions frm;
         private NativeModule Module;
@@ -33,6 +34,7 @@ namespace SKYNET
             InitializeComponent();
             frm = this;
             CheckForIllegalCrossThreadCalls = false;
+            base.EnableShadows = true;
 
             Module = module;
         }
@@ -93,20 +95,6 @@ namespace SKYNET
         {
             Close();
         }
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            int attrValue = 2;
-            DwmApi.DwmSetWindowAttribute(base.Handle, 2, ref attrValue, 16);
-            DwmApi.MARGINS mARGINS = default(DwmApi.MARGINS);
-            mARGINS.cyBottomHeight = 1;
-            mARGINS.cxLeftWidth = 0;
-            mARGINS.cxRightWidth = 0;
-            mARGINS.cyTopHeight = 0;
-            DwmApi.MARGINS marInset = mARGINS;
-            DwmApi.DwmExtendFrameIntoClientArea(base.Handle, ref marInset);
-        }
-
         private void LV_ItemsView_SelectedIndexChanged(object sender, EventArgs e)
         {
             try

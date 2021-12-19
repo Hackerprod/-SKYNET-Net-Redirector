@@ -14,6 +14,7 @@ using Be.Windows.Forms;
 using EasyHook;
 using NativeSharp;
 using SKYNET.Controls;
+using SKYNET.GUI;
 using SKYNET.GUI.Controls;
 using SKYNET.Helper;
 using SKYNET.Hook.Types;
@@ -21,7 +22,7 @@ using SKYNET.Types;
 
 namespace SKYNET
 {
-    public partial class frmProcessInjector : Form
+    public partial class frmProcessInjector : frmBase
     {
         public static frmProcessInjector frm;
         private List<Process> Processes;
@@ -32,6 +33,7 @@ namespace SKYNET
         {
             modCommon.ShowShadow = true;
             InitializeComponent();
+            base.EnableShadows = true;
             frm = this;
             CheckForIllegalCrossThreadCalls = false;
             this.hookInterface = hookInterface;
@@ -123,19 +125,6 @@ namespace SKYNET
         private void B_Close_Clicked(object sender, EventArgs e)
         {
             Close();
-        }
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            int attrValue = 2;
-            DwmApi.DwmSetWindowAttribute(base.Handle, 2, ref attrValue, 16);
-            DwmApi.MARGINS mARGINS = default(DwmApi.MARGINS);
-            mARGINS.cyBottomHeight = 1;
-            mARGINS.cxLeftWidth = 0;
-            mARGINS.cxRightWidth = 0;
-            mARGINS.cyTopHeight = 0;
-            DwmApi.MARGINS marInset = mARGINS;
-            DwmApi.DwmExtendFrameIntoClientArea(base.Handle, ref marInset);
         }
         private void TB_SearchClicked(object sender, EventArgs e)
         {

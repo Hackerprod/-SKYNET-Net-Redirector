@@ -106,7 +106,6 @@
     <Compile Include="GUI\Controls\SKYNET_TextBox.designer.cs">
       <DependentUpon>SKYNET_TextBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\DwmApi.cs" />
     <Compile Include="GUI\frmBase.cs">
       <SubType>Form</SubType>
     </Compile>
