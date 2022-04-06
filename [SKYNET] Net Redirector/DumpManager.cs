@@ -125,6 +125,8 @@ namespace SKYNET
         }
         private void ClearEmptyDumps()
         {
+            modCommon.EnsureDirectoryExists(DumpDirectory);
+
             foreach (var item in Directory.GetFiles(DumpDirectory, "*.dump"))
             {
                 if (item != Filename && new FileInfo(item).Length == 0)
