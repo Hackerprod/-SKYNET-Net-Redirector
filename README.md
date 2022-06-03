@@ -24,32 +24,32 @@ Plugin system              Load external plugin to implement new features.
 |----------|------------ |
 | crypt32.dll | CertVerifyCertificateChainPolicy |
 | kernel32.dll | CreateProcessA |
-|  | CreateProcessW |
+| kernel32.dll | CreateProcessW |
 | ntdll.dll | LdrLoadDll |
 | ws2_32.dll | connect |
-|   | getaddrinfo |
-|   | GetAddrInfoExA |
-|   | GetAddrInfoExW |
-|   | GetAddrInfoW |
-|   | gethostbyname |
-|   | socket |
-|   | recv |
-|   | send |
-|   | sendto |
-|   | connect |
-|   | listen |
-|   | recvfrom |
-|   | WSAConnectByNameA |
-|   | WSAConnectByNameW |
-|   | WSAConnect |
-|   | WSASocketW |
-|   | WSARecv |
-|   | WSARecvFrom |
-|   | WSASend |
-|   | WSASendTo |
+| ws2_32.dll | getaddrinfo |
+| ws2_32.dll | GetAddrInfoExA |
+| ws2_32.dll | GetAddrInfoExW |
+| ws2_32.dll | GetAddrInfoW |
+| ws2_32.dll | gethostbyname |
+| ws2_32.dll | socket |
+| ws2_32.dll | recv |
+| ws2_32.dll | send |
+| ws2_32.dll | sendto |
+| ws2_32.dll | connect |
+| ws2_32.dll | listen |
+| ws2_32.dll | recvfrom |
+| ws2_32.dll | WSAConnectByNameA |
+| ws2_32.dll | WSAConnectByNameW |
+| ws2_32.dll | WSAConnect |
+| ws2_32.dll | WSASocketW |
+| ws2_32.dll | WSARecv |
+| ws2_32.dll | WSARecvFrom |
+| ws2_32.dll | WSASend |
+| ws2_32.dll | WSASendTo |
 
 ## 🔌 Plugin system
-The plugin system is designed to add features to the program, the following example shows a basic plugin. <br /><br />
+The plugin system is designed to add features to the program, the following example shows a basic plugin. <br />
 
 **Interface for plugin:**
 ```csharp
@@ -65,6 +65,7 @@ namespace SKYNET.Plugin
     }
 }
 ```
+
 **Plugin example:**
 ```csharp
 namespace SKYNET.Plugin
