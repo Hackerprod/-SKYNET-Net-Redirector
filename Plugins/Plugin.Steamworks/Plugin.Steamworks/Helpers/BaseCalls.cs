@@ -1,20 +1,50 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using EasyHook;
 using SKYNET;
 using SKYNET.Helper;
+using SKYNET.Plugin;
 
 public abstract class BaseCalls
 {
-    public void PRINT_DEBUG(object msg)
-    {
-        Plugin.Write(msg);
-    }
     public string Library => "steam_api64.dll";
+
     public void Write(object msg)
     {
-        PRINT_DEBUG(msg);
+        Main.Write("Steamworks", msg);
     }
+
+    public abstract void Install();
+
+    internal void Install<T>(string Method, T Delegate1, T Delegate2, BaseCalls Instance = null) where T : System.Delegate
+    {
+        try
+        {
+            var ProcAddress = NativeMethods.GetProcAddress(Library, Method);
+            if (ProcAddress == IntPtr.Zero)
+            {
+                Main.Write("HookManager", "Method " + Method + " not found");
+                return;
+            }
+            try
+            {
+                var Hook = LocalHook.Create(ProcAddress, Delegate2, Main.Instance);
+
+                Hook.ThreadACL.SetExclusiveACL(new int[0]);
+
+                Delegate1 = Marshal.GetDelegateForFunctionPointer<T>(ProcAddress);
+            }
+            catch
+            {
+                Main.Write("HookManager", $"Failed injecting {Method} in {Path.GetFileName(Library)}");
+            }
+        }
+        catch
+        {
+        }
+    }
+
     public void InstallDelegate<T>(string Method, Delegate Delegate, T steamtDelegate)
     {
         try
@@ -33,7 +63,6 @@ public abstract class BaseCalls
                 //Write($"Installed {Method} in {Library}");
 
                 steamtDelegate = Marshal.GetDelegateForFunctionPointer<T>(ProcAddress);
-                Write($"xd");
             }
             catch
             {

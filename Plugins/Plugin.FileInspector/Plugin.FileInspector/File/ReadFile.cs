@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,7 +15,7 @@ namespace SKYNET.Hook
     public class ReadFile : IHook
     {
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
-        private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+        private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, IntPtr lpNumberOfBytesRead, IntPtr lpOverlapped);
         private ReadFileDelegate _ReadFile;
 
         public override string Library => "kernel32.dll";
@@ -31,9 +32,14 @@ namespace SKYNET.Hook
             }
         }
 
-        private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped)
+        private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, IntPtr lpNumberOfBytesRead, IntPtr lpOverlapped)
         {
-            bool result = _ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, out lpNumberOfBytesRead, lpOverlapped);
+            Write("ReadFile");
+            Marshal.WriteInt32(lpNumberOfBytesRead, 0);
+            return false;
+            //bool Result = _ReadFile(hFile, lpBuffer, ref nNumberOfBytesToRead, lpOverlapped);
+            byte[] bytes = default;
+            //lpNumberOfBytesRead = 0;
 
             try
             {
@@ -42,16 +48,32 @@ namespace SKYNET.Hook
 
                 if (string.IsNullOrEmpty(filename.ToString()))
                 {
-                    return result;
+                    return false;
                 }
                 string file = filename.ToString().Replace(@"\\?\", "");
                 string Message = $"Reading file {file}";
-                Write(Message);
+
+                if (File.Exists(file))
+                {
+                    bytes = File.ReadAllBytes(file);
+                }
+
+                if (bytes != null && bytes.Length > 0)
+                {
+                    //Marshal.Copy(bytes, 0, lpBuffer, bytes.Length);
+                    //Marshal.WriteInt32(lpNumberOfBytesRead, bytes.Length);
+                    //Array.Copy(bytes, lpBuffer, bytes.Length);
+                    //lpNumberOfBytesRead = (uint)bytes.Length;
+                    //return true;
+                }
+
+                Write(Message + $", {lpNumberOfBytesRead} bytes");
+
             }
             catch 
             {
             }
-            return result;
+            return false;
         }
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]

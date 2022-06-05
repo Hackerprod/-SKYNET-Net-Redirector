@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8BD1B76C-AB68-40ED-8E45-E5CF2A234C40}</ProjectGuid>
+    <ProjectGuid>{D9D42C82-7A22-4B57-87FF-01DF3784BE41}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKYNET</RootNamespace>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\[SKYNET] Net Redirector\bin\Debug\Plugins\</OutputPath>
+    <OutputPath>..\..\..\[SKYNET] Net Redirector\bin\Debug\Data\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -53,20 +53,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handles\SteamAPI\SteamAPI.cs" />
+    <Compile Include="Handles\SteamAPI\SteamAPI_Delegates.cs" />
+    <Compile Include="Handles\SteamAppList\SteamAPI_ISteamAppList.cs" />
+    <Compile Include="Handles\SteamAppList\SteamAPI_ISteamAppList_Delegates.cs" />
+    <Compile Include="Handles\SteamInternal\SteamInternal.cs" />
+    <Compile Include="Handles\SteamInternal\SteamInternal_Delegates.cs" />
     <Compile Include="Helpers\BaseCalls.cs" />
     <Compile Include="Helpers\CallbackType.cs" />
     <Compile Include="Helpers\HookHelper.cs" />
     <Compile Include="Helpers\HSteamPipe.cs" />
     <Compile Include="Helpers\HSteamUser.cs" />
-    <Compile Include="SteamApi.cs" />
+    <Compile Include="Managers\InterfaceManager.cs" />
     <Compile Include="SteamApi\SteamAPIInterop.cs" />
-    <Compile Include="SteamAPI_ISteamClient.cs" />
-    <Compile Include="SteamAPI_ISteamGameServer.cs" />
-    <Compile Include="SteamAPI_ISteamHTTP.cs" />
-    <Compile Include="SteamAPI_ISteamUser.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SteamInternal.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

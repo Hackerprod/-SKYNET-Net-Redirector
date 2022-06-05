@@ -38,15 +38,15 @@ namespace SKYNET.Hook.Handler
 
             string originalHost = nname + (string.IsNullOrEmpty(nname) ? "" : ":" + nServerPort);
             string RedirectedHost = nname;
-            string RedirectedPort = nServerPort.ToString();
+            var RedirectedPort = nServerPort;
 
             string addr = pswsServerName;
 
             if (IsValidDomain(nname))
             {
                 RedirectedHost = Main.GetRedirectedHost(nname);
-                RedirectedPort = Main.GetRedirectedPort(nServerPort.ToString());
-                string TargetHost = RedirectedHost + (string.IsNullOrEmpty(RedirectedPort) ? "" : ":" + RedirectedPort);
+                RedirectedPort = Main.GetRedirectedPort(nServerPort);
+                string TargetHost = RedirectedHost + RedirectedPort;
                 addr = RedirectedHost;
                 Write($"Redirecting DNS {originalHost} to {TargetHost}");
             }
@@ -55,7 +55,7 @@ namespace SKYNET.Hook.Handler
                 Write($"Ignoring DNS {originalHost}");
             }
 
-            return _WinHttpConnectDelegate(hSession, addr, int.Parse(RedirectedPort), dwReserved);
+            return _WinHttpConnectDelegate(hSession, addr, RedirectedPort, dwReserved);
         }
         public bool IsValidDomain(string dns)
         {

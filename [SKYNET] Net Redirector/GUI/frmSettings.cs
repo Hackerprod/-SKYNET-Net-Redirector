@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using EasyHook;
 using Microsoft.Win32;
-using SKYNET.Controls;
 using SKYNET.GUI;
 using SKYNET.Helper;
 
@@ -178,6 +173,7 @@ namespace SKYNET
                     ShellManager.RemoveContextMenuItem("Show dump with [SKYNET] Net Redirector");
                 }
             }
+
             if (CH_AssociateFileExtension.Checked != frmMain.frm.AssociateFileExtension)
             {
                 if (CH_AssociateFileExtension.Checked)
@@ -189,9 +185,9 @@ namespace SKYNET
                     ShellManager.DeAsociateExtention(".dump");
                 }
             }
+
             frmMain.frm.WindowsMenuItem = CH_WindowsMenuItem.Checked;
             frmMain.frm.AssociateFileExtension = CH_AssociateFileExtension.Checked;
-
             frmMain.SaveSettings();
 
             Close();

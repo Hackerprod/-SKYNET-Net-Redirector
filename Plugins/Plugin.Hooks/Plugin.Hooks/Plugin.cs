@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SKYNET.Hook;
 using SKYNET.Hook.Handler;
 using SKYNET.Hook.Processor;
 
-namespace SKYNET
+namespace SKYNET.Plugin
 {
     public class Plugin : IPlugin
     {
@@ -42,10 +43,10 @@ namespace SKYNET
             Hooks.Add(new GetServByName());
             Hooks.Add(new Bind());
             Hooks.Add(new SetSockOpt());
-            
+        }
 
-
-
+        public void ModuleLoaded(string module)
+        {
 
         }
     }

@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 using SKYNET.Hook;
 using SKYNET.Hook.Processor;
 
-namespace SKYNET
+namespace SKYNET.Plugin
 {
     public class Plugin : IPlugin
     {
         public HookInterface HookInterface { get; set; }
         public Main Main { get; set; }
         public List<IHook> Hooks { get; set; }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
 
         public void Initialize(Main main, HookInterface @interface)
         {
@@ -35,7 +40,7 @@ namespace SKYNET
 
         public void ModuleLoaded(string module)
         {
-            Main.Write("Plugin", $"Loaded module {module}", Color.BurlyWood);
+
         }
 
 

@@ -31,6 +31,7 @@ namespace SKYNET
         public bool LoadPlugins { get; set; }
         public string ChannelName { get; set; }
         public string DllPath { get; set; }
+        public string PluginsPath { get; set; }
         public InjectionOptions InjectionOptions { get; set; }
 
 

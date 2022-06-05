@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\[SKYNET] Net Redirector\bin\Debug\Plugins\</OutputPath>
+    <OutputPath>..\..\..\[SKYNET] Net Redirector\bin\Debug\Data\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

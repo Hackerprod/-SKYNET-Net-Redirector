@@ -68,7 +68,6 @@ namespace SKYNET
         {
             try
             {
-
                 if (HookInterface.LoadPlugins)
                 {
                     InstallPlugins();
@@ -98,7 +97,7 @@ namespace SKYNET
 
         private void InstallPlugins()
         {
-            string PluginsDirectory = Path.Combine(modCommon.GetPath(), "Data", "Plugins");
+            string PluginsDirectory = HookInterface.PluginsPath;
             if (Directory.Exists(PluginsDirectory))
             {
                 foreach (var file in Directory.GetFiles(PluginsDirectory, "*.dll"))
@@ -106,7 +105,9 @@ namespace SKYNET
                     try
                     {
                         var plugin = Assembly.LoadFile(file);
-                        Type type = plugin.GetType("SKYNET.Plugin");
+                        string Namespace = "SKYNET.Plugin";
+                        string ClassName = "Plugin";
+                        Type type = plugin.GetType($"{Namespace}.{ClassName}");
                         if (type != null)
                         {
                             IPlugin iPlugin = (IPlugin)Activator.CreateInstance(type);

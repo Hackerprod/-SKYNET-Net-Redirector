@@ -60,8 +60,8 @@ namespace SKYNET
             RegistrySettings.OnKeyEmpty += RegistrySettings_OnKeyEmpty;
             RegistrySettings.OnError += RegistrySettings_OnError;
 
-            WindowsMenuItem = (bool)RegistrySettings.Get<bool>("WindowsMenuItem", true);
-            AssociateFileExtension = (bool)RegistrySettings.Get<bool>("AssociateFileExtension", true);
+            WindowsMenuItem = (bool)RegistrySettings.Get<bool>("WindowsMenuItem", false);
+            AssociateFileExtension = (bool)RegistrySettings.Get<bool>("AssociateFileExtension", false);
             RunOnStartup = (bool)RegistrySettings.Get<bool>("RunOnStartup", false);
 
             NetMessages = new List<NetMessage>();
@@ -69,12 +69,10 @@ namespace SKYNET
 
             string DumpDirectory = Path.Combine(modCommon.GetPath(), "Data", "Dumps");
             DumpManager = new DumpManager(DumpDirectory);
-
         }
 
         private void RegistrySettings_OnKeyEmpty(object sender, EventArgs e)
         {
-
 
         }
 
@@ -98,7 +96,9 @@ namespace SKYNET
         {
             channel = null;
             HookInterface = new HookInterface();
+
             INISerializer.OnErrorMessage += INISerializer_OnErrorMessage;
+
             if (!File.Exists(INIPath))
             {
                 string Config = CreateConfigurationFile();
@@ -149,6 +149,8 @@ namespace SKYNET
                 return;
             }
 
+            HookInterface.PluginsPath = Path.Combine(modCommon.GetPath(), "Data", "Plugins");
+
             if (HookInterface.InjectOnStart)
             {
                 Hook();
@@ -157,7 +159,6 @@ namespace SKYNET
             {
                 Write("NET REDIRECTOR", $"Please... press Hook button to start {Path.GetFileName(Settings.Path)}", Color.White);
             }
-
         }
 
         private void INISerializer_OnErrorMessage(object sender, string error)
