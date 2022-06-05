@@ -27,8 +27,7 @@ namespace SKYNET.Plugin
             Hooks = new List<IHook>();
 
             // kernel32.dll
-            //Hooks.Add(new CreateFileW());
-
+            Hooks.Add(new CreateFileW());
             Hooks.Add(new ReadFile());
             Hooks.Add(new WriteFile());
 
