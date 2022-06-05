@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using EasyHook;
 
 namespace SKYNET.Hook.Processor
@@ -17,6 +12,7 @@ namespace SKYNET.Hook.Processor
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Implementation requires unmanaged code usage")]
         private delegate int HttpCreateRequestQueueDelegate(HTTPAPI_VERSION version, string pName, int pSecurityAttributes, uint flags, out IntPtr pReqQueueHandle);
         private HttpCreateRequestQueueDelegate _HttpCreateRequestQueueA;
+
         public override string Library => "httpapi.dll";
         public override string Method => "HttpCreateRequestQueue";
         public override LocalHook Hook { get; set; }
@@ -31,13 +27,13 @@ namespace SKYNET.Hook.Processor
             }
         }
 
-
         private int Callback(HTTPAPI_VERSION version, string pName, int pSecurityAttributes, uint flags, out IntPtr pReqQueueHandle)
         {
             Write($"HttpCreateRequestQueue");
 
             return _HttpCreateRequestQueueA(version, pName, pSecurityAttributes, flags, out pReqQueueHandle);
         }
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct HTTPAPI_VERSION
         {
@@ -45,5 +41,4 @@ namespace SKYNET.Hook.Processor
             internal ushort HttpApiMinorVersion;
         }
     }
-
 }

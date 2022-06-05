@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using SKYNET.Hook;
-using SKYNET.Hook.Processor;
 
 namespace SKYNET.Plugin
 {
@@ -14,11 +8,6 @@ namespace SKYNET.Plugin
         public HookInterface HookInterface { get; set; }
         public Main Main { get; set; }
         public List<IHook> Hooks { get; set; }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
 
         public void Initialize(Main main, HookInterface @interface)
         {
@@ -42,6 +31,9 @@ namespace SKYNET.Plugin
 
         }
 
+        public void Dispose()
+        {
 
+        }
     }
 }

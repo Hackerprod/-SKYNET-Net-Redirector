@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyHook;
-using SKYNET.Helper;
-using SKYNET.Hook.Types;
 
 namespace SKYNET.Hook.Handler
 {

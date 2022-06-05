@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using EasyHook;
 using SKYNET.Helper;
 using static SKYNET.Hook.Types.WinSockHelper;
@@ -11,15 +10,14 @@ namespace SKYNET.Hook.Processor
 {
 	public class Bind : IHook
 	{
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
+        private delegate IntPtr BindDelegate(Socket socket, IntPtr lpSockAddr, int namelen);
+        private BindDelegate _Bind;
+
         public override string Library => "ws2_32.dll";
         public override string Method => "bind";
         public override LocalHook Hook { get; set; }
         public override Color Color => ColorTranslator.FromHtml("#D79B66");
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
-		private delegate IntPtr BindDelegate(Socket socket, IntPtr lpSockAddr, int namelen);
-        private BindDelegate _Bind;
-
         public override Delegate Delegate
         {
             get
@@ -35,13 +33,11 @@ namespace SKYNET.Hook.Processor
             string originalIp = new IPAddress(addr_in.sin_addr).ToString();
             string originalPort = Ws2_32.ntohs(addr_in.sin_port).ToString();
 
-            //var Source = socket.GetSourceIPEndPoint();
-            //var Destination = socket.GetDestinationIPEndPoint();
-
             Write($"Binding socket to {originalIp}:{originalPort} ");
 
             return _Bind(socket, lpSockAddr, namelen);
 		}
+
         public struct Socket
         {
             IntPtr Handle;

@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyHook;
-using SKYNET.Hook.Types;
-using SKYNET.Helper;
-using static SKYNET.Hook.Types.WinSockHelper;
 
 namespace SKYNET.Hook.Processor
 {
@@ -24,6 +13,7 @@ namespace SKYNET.Hook.Processor
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate int GetPeerNameDelegate(IntPtr s, IntPtr addr, int addrsize);
         GetPeerNameDelegate _GetPeerName;
+
         public override string Library => "ws2_32.dll";
         public override string Method => "getpeername";
         public override LocalHook Hook { get; set; }
@@ -62,6 +52,5 @@ namespace SKYNET.Hook.Processor
 
             return r;
         }
-
     }
 }

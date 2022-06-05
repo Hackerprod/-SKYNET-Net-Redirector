@@ -1,26 +1,21 @@
 using System;
 using System.Drawing;
-using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 using EasyHook;
-using SKYNET.Helper;
-using static SKYNET.Hook.Types.WinSockHelper;
 
 namespace SKYNET.Hook.Processor
 {
 	public class SetSockOpt : IHook
 	{
-        public override string Library => "ws2_32.dll";
-        public override string Method => "setsockopt";
-        public override LocalHook Hook { get; set; }
-        public override Color Color => ColorTranslator.FromHtml("#8080FF");
-
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
 		private delegate IntPtr SetSockOptDelegate(IntPtr handle, SocketOptionLevel optionLevel, SocketOptionName optionName, ref Linger linger, int optionLength);
         private SetSockOptDelegate _SetSockOpt;
 
+        public override string Library => "ws2_32.dll";
+        public override string Method => "setsockopt";
+        public override LocalHook Hook { get; set; }
+        public override Color Color => ColorTranslator.FromHtml("#8080FF");
         public override Delegate Delegate
         {
             get
@@ -29,6 +24,7 @@ namespace SKYNET.Hook.Processor
                 return new SetSockOptDelegate(Callback);
             }
         }
+
         private IntPtr Callback(IntPtr handle, SocketOptionLevel optionLevel, SocketOptionName optionName, ref Linger linger, int optionLength)
 		{
             var Opt = _SetSockOpt(handle, optionLevel, optionName, ref linger, optionLength);
@@ -38,6 +34,7 @@ namespace SKYNET.Hook.Processor
             return Opt;
 
         }
+
         public enum SocketOptionLevel
         {
             Socket = 0xffff,            // Indicates socket options apply to the socket itself.
@@ -47,6 +44,7 @@ namespace SKYNET.Hook.Processor
             Udp = ProtocolType.Udp,     // Indicates socket options apply to Udp sockets.
 
         };
+
         public enum ProtocolType
         {
             /// <devdoc>
@@ -468,6 +466,7 @@ namespace SKYNET.Hook.Processor
             UpdateConnectContext = 0x7010,
 
         }; // enum SocketOptionName
+
         [StructLayout(LayoutKind.Sequential)]
         internal struct Linger
         {

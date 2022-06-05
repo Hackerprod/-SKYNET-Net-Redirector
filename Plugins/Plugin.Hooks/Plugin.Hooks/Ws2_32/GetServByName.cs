@@ -8,15 +8,14 @@ namespace SKYNET.Hook.Processor
 {
 	public class GetServByName : IHook
 	{
-        public override string Library => "ws2_32.dll";
-        public override string Method => "getservbyname";
-        public override LocalHook Hook { get; set; }
-        public override Color Color => ColorTranslator.FromHtml("#f58207");
-
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
 		private delegate IntPtr GetServByNameDelegate([MarshalAs(UnmanagedType.LPWStr)] string name, [Optional] string proto);
         private GetServByNameDelegate _GetServByName;
 
+        public override string Library => "ws2_32.dll";
+        public override string Method => "getservbyname";
+        public override LocalHook Hook { get; set; }
+        public override Color Color => ColorTranslator.FromHtml("#f58207");
         public override Delegate Delegate
         {
             get

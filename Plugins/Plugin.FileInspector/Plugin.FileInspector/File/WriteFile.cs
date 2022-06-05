@@ -11,6 +11,7 @@ namespace SKYNET.Hook
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate bool WriteFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, IntPtr lpOverlapped);
         private WriteFileDelegate _WriteFile;
+
         public override string Library => "kernel32.dll";
         public override string Method => "WriteFile";
         public override LocalHook Hook { get; set; }

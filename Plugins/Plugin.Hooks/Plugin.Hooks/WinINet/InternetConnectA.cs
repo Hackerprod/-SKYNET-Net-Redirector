@@ -1,8 +1,6 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using EasyHook;
 
 namespace SKYNET.Hook.Processor
@@ -12,11 +10,11 @@ namespace SKYNET.Hook.Processor
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
         private delegate int InternetConnectADelegate(IntPtr hInternet, string lpszServerName, int nServerPort, string lpszUsername, string lpszPassword, int dwService, int dwFlags, int dwContext);
         private InternetConnectADelegate _InternetConnectA;
+
         public override string Library => "wininet.dll";
         public override string Method => "InternetConnectA";
         public override LocalHook Hook { get; set; }
         public override Color Color => ColorTranslator.FromHtml("#f58207");
-
         public override Delegate Delegate
         {
             get

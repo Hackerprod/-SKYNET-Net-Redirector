@@ -1,11 +1,8 @@
 using System;
 using System.Drawing;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using EasyHook;
-using SKYNET.Helper;
 
 namespace SKYNET.Hook.Handler
 {
@@ -17,6 +14,7 @@ namespace SKYNET.Hook.Handler
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
         private delegate IntPtr WinHttpConnectDelegate(IntPtr hSession, [MarshalAs(UnmanagedType.LPWStr)] string pswsServerName, int nServerPort, int dwReserved);
         private WinHttpConnectDelegate _WinHttpConnectDelegate;
+
         public override string Library => "winhttp.dll";
         public override string Method => "WinHttpConnect";
         public override LocalHook Hook { get; set; }
@@ -30,7 +28,6 @@ namespace SKYNET.Hook.Handler
                 return new WinHttpConnectDelegate(Callback);
             }
         }
-
 
         private IntPtr Callback(IntPtr hSession, string pswsServerName, int nServerPort, int dwReserved)
         {
@@ -57,12 +54,12 @@ namespace SKYNET.Hook.Handler
 
             return _WinHttpConnectDelegate(hSession, addr, RedirectedPort, dwReserved);
         }
+
         public bool IsValidDomain(string dns)
         {
             return Regex.IsMatch(dns);
         }
+
         private static readonly Regex Regex = new Regex("^([a-z0-9]+(-[a-z0-9]+)*\\.)+[a-z]{2,}$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
     }
-
 }
