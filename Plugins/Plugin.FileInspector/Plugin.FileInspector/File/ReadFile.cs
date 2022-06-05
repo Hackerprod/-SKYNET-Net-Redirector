@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using EasyHook;
 
 namespace SKYNET.Hook
@@ -15,7 +9,7 @@ namespace SKYNET.Hook
     public class ReadFile : IHook
     {
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
-        private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, IntPtr lpNumberOfBytesRead, IntPtr lpOverlapped);
+        private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
         private ReadFileDelegate _ReadFile;
 
         public override string Library => "kernel32.dll";
@@ -32,52 +26,62 @@ namespace SKYNET.Hook
             }
         }
 
-        private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, IntPtr lpNumberOfBytesRead, IntPtr lpOverlapped)
+        private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped)
         {
-            Write("ReadFile");
-            Marshal.WriteInt32(lpNumberOfBytesRead, 0);
-            return false;
-            //bool Result = _ReadFile(hFile, lpBuffer, ref nNumberOfBytesToRead, lpOverlapped);
-            byte[] bytes = default;
-            //lpNumberOfBytesRead = 0;
+            bool result = false;
+            lpNumberOfBytesRead = 0;
+
+            result = _ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, out lpNumberOfBytesRead, lpOverlapped);
 
             try
             {
                 StringBuilder filename = new StringBuilder(255);
                 GetFinalPathNameByHandle(hFile, filename, 255, 0);
-
-                if (string.IsNullOrEmpty(filename.ToString()))
-                {
-                    return false;
-                }
                 string file = filename.ToString().Replace(@"\\?\", "");
-                string Message = $"Reading file {file}";
-
-                if (File.Exists(file))
+                if (!string.IsNullOrEmpty(file))
                 {
-                    bytes = File.ReadAllBytes(file);
+                    Write($"Reading file {file}, {LongToMbytes(lpNumberOfBytesRead)}");
                 }
-
-                if (bytes != null && bytes.Length > 0)
-                {
-                    //Marshal.Copy(bytes, 0, lpBuffer, bytes.Length);
-                    //Marshal.WriteInt32(lpNumberOfBytesRead, bytes.Length);
-                    //Array.Copy(bytes, lpBuffer, bytes.Length);
-                    //lpNumberOfBytesRead = (uint)bytes.Length;
-                    //return true;
-                }
-
-                Write(Message + $", {lpNumberOfBytesRead} bytes");
-
             }
-            catch 
+            catch
             {
             }
-            return false;
+
+            return result;
+        }
+
+        public static string LongToMbytes(long lBytes)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            string str1 = "Bytes";
+            if (lBytes > 1024L)
+            {
+                string str2;
+                float num;
+                if (lBytes < 1048576L)
+                {
+                    str2 = "KB";
+                    num = Convert.ToSingle(lBytes) / 1024f;
+                }
+                else
+                {
+                    str2 = "MB";
+                    num = Convert.ToSingle(lBytes) / 1048576f;
+                }
+                stringBuilder.AppendFormat("{0:0.0} {1}", (object)num, (object)str2);
+            }
+            else
+            {
+                float num = Convert.ToSingle(lBytes);
+                stringBuilder.AppendFormat("{0:0} {1}", (object)num, (object)str1);
+            }
+            return stringBuilder.ToString();
         }
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
 
+        [DllImport("kernel32.dll", EntryPoint = "ReadFile", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        static extern bool ReadFileImported(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
     }
 }
