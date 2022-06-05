@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using EasyHook;
 using SKYNET.Helper;
 using SKYNET.Hook.Processor;
@@ -62,15 +58,7 @@ namespace SKYNET.Hook
             Hooks.Add(new WSAConnectByNameW());
             //Hooks.Add(new ConnectToProxy());
 
-            //Task.Run(() =>
-            //{
-            //    var certHandler = new CertificateHandler();
-            //    certHandler.Initialize();
-            //});
-
             Hooks.Add(new HttpInitialize());
-
-
 
             //Hooks.Add(new Listen());
             //Hooks.Add(new WSASocketW());
@@ -79,23 +67,11 @@ namespace SKYNET.Hook
             Hooks.Add(new CloseSocket());
             Hooks.Add(new OpenSocket());
             Hooks.Add(new WSAOpenSocketW());
-            
-
-            //Task.Run(() =>
-            //{
-            //    var s = VRage.MyTryConnectHelper.TryConnect("10.31.0.1", 28000);
-            //    Main.Write("Modules", s, Color.Chocolate);
-            //});
-
-            //SockHook hook = new SockHook();
-            //hook.InitializeHooks()
 
             Hooks.Add(new CreateProcessA());
             Hooks.Add(new CreateProcessW());
 
             Hooks.Add(new LdrLoadDll());
-
-
 
             // Send packet
             TrafficHooks.Add(new Send());
@@ -103,7 +79,7 @@ namespace SKYNET.Hook
             TrafficHooks.Add(new WSASend());
             TrafficHooks.Add(new WSASendTo());
 
-            //// Received packet
+            // Received packet
             TrafficHooks.Add(new Recv());
             TrafficHooks.Add(new RecvFrom());
             TrafficHooks.Add(new WSARecvFrom());

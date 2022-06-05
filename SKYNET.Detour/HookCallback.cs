@@ -11,10 +11,9 @@ namespace SKYNET
         public event EventHandler<bool> DumpToConsoleChanged;
         public event EventHandler<bool> DumpToFileChanged;
         public event EventHandler<bool> SkipChainVerificationChanged;
-        public event EventHandler<ConcurrentDictionary<string, string>> PortRedirectionChanged;
+        public event EventHandler<ConcurrentDictionary<int, int>> PortRedirectionChanged;
         public event EventHandler<ConcurrentDictionary<string, string>> IpRedirectionChanged;
         public event EventHandler<ConcurrentDictionary<string, string>> DnsRedirectionChanged;
-
 
         public void Ping()
         {
@@ -28,6 +27,7 @@ namespace SKYNET
         {
             ReleaseHook?.Invoke(this, hook);
         }
+
         public void InvokeDumpToConsoleChanged(bool capture)
         {
             DumpToConsoleChanged?.Invoke(this, capture);
@@ -43,7 +43,7 @@ namespace SKYNET
             SkipChainVerificationChanged?.Invoke(this, @checked);
         }
 
-        public void InvokePortRedirectionChanged(ConcurrentDictionary<string, string> portRedirection)
+        public void InvokePortRedirectionChanged(ConcurrentDictionary<int, int> portRedirection)
         {
             PortRedirectionChanged?.Invoke(this, portRedirection);
         }

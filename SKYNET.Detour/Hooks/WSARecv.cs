@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using EasyHook;
-using SKYNET.Helper;
-using SKYNET.Hook.Types;
-using static System.Net.UnsafeNclNativeMethods;
-using static SKYNET.Helper.Ws2_32;
-using static SKYNET.Hook.Types.WinSockHelper;
 
 namespace SKYNET.Hook.Processor
 {

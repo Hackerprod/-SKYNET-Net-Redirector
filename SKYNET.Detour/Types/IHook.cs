@@ -2,7 +2,7 @@
 using System.Drawing;
 using EasyHook;
 
-namespace SKYNET
+namespace SKYNET.Hook
 {
     public abstract class IHook
     {

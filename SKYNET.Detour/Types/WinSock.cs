@@ -77,15 +77,15 @@ namespace SKYNET.Hook.Types
 
         public static IntPtr CreateAddr(IPEndPoint EndPoint)
         {
-            return CreateAddr(EndPoint.Address.ToString(), EndPoint.Port.ToString()); ;
+            return CreateAddr(EndPoint.Address.ToString(), EndPoint.Port); ;
         }
-        public static IntPtr CreateAddr(string ip, string port)
+        public static IntPtr CreateAddr(string ip, int port)
         {
             var s = Marshal.AllocHGlobal(16);
             SOCKADDR_IN sockAddr = new SOCKADDR_IN();
             sockAddr.sin_family = (int)AddressFamily.InterNetwork;
-            sockAddr.sin_addr = UnsafeNclNativeMethods.OSSOCK.inet_addr(ip);
-            sockAddr.sin_port = Ws2_32.htons(Convert.ToUInt16(port.ToString()));
+            sockAddr.sin_addr = Ws2_32.inet_addr(ip);
+            sockAddr.sin_port = Ws2_32.htons((ushort)port);
 
             Marshal.StructureToPtr(sockAddr, s, true);
             return s;
@@ -120,7 +120,7 @@ namespace SKYNET.Hook.Types
         public static unsafe AddressInfoW CreateAddressInfoW(string Host)
         {
             //Variant 2
-            IntPtr addr_2 = CreateAddr(Host, "25000"); int size_2 = 16;
+            IntPtr addr_2 = CreateAddr(Host, 25000); int size_2 = 16;
             //Variant 3
             IntPtr addr_3 = CreateSockaddrStructure(new IPEndPoint(IPAddress.Parse(Host), 80), out int size_3);
 

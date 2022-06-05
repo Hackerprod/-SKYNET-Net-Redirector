@@ -16,21 +16,21 @@ namespace SKYNET.Hook
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
         private ReadFileDelegate _ReadFile;
+
         public override string Library => "kernel32.dll";
         public override string Method => "ReadFile";
         public override LocalHook Hook { get; set; }
         public override Color Color => ColorTranslator.FromHtml("#FF33B4");
+
         public override Delegate Delegate
         {
             get
             {
                 _ReadFile = Marshal.GetDelegateForFunctionPointer<ReadFileDelegate>(ProcAddress);
-
                 return new ReadFileDelegate(Callback);
             }
         }
 
-        string lastMessage = "";
         private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped)
         {
             bool result = _ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, out lpNumberOfBytesRead, lpOverlapped);
@@ -46,22 +46,16 @@ namespace SKYNET.Hook
                 }
                 string file = filename.ToString().Replace(@"\\?\", "");
                 string Message = $"Reading file {file}";
-                if (Message != lastMessage)
-                {
-                    Write(Message);
-                    lastMessage = Message;
-                }
+                Write(Message);
             }
-            catch (Exception)
+            catch 
             {
-
-               
             }
             return result;
         }
+
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
 
     }
-
 }

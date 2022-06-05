@@ -33,7 +33,7 @@ namespace SKYNET
         }
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            LB_Path.Text = frmMain.ExecutablePath.Replace(@"\", "/");
+            LB_Path.Text = frmMain.Settings.Path.Replace(@"\", "/");
             InjectOnStart.Checked = frmMain.HookInterface.InjectOnStart;
             LoadPlugins.Checked = frmMain.HookInterface.LoadPlugins;
             DumpToConsole.Checked = frmMain.HookInterface.DumpToConsole;
@@ -84,36 +84,36 @@ namespace SKYNET
 
         private void BT_Apply_Click(object sender, EventArgs e)
         {
-            frmMain.ExecutablePath = LB_Path.Text;
+            frmMain.Settings.Path = LB_Path.Text;
 
             frmMain.frm.RunOnStartup = RunOnStartup.Checked;
             RegisterOnStartup(RunOnStartup.Checked);
 
-            frmMain.HookInterface.InjectOnStart = InjectOnStart.Checked;
-            frmMain.HookInterface.LoadPlugins = LoadPlugins.Checked;
+            frmMain.HookInterface.InjectOnStart = frmMain.Settings.InjectOnStart = InjectOnStart.Checked;
+            frmMain.HookInterface.LoadPlugins = frmMain.Settings.LoadPlugins = LoadPlugins.Checked;
 
             if (frmMain.HookInterface.DumpToConsole != DumpToConsole.Checked)
             {
-                frmMain.HookInterface.DumpToConsole = DumpToConsole.Checked;
+                frmMain.HookInterface.DumpToConsole = frmMain.Settings.DumpToConsole = DumpToConsole.Checked;
                 frmMain.HookCallback?.InvokeDumpToConsoleChanged(DumpToConsole.Checked);
             }
 
             if (frmMain.HookInterface.DumpToFile != DumpToFile.Checked)
             {
-                frmMain.HookInterface.DumpToFile = DumpToFile.Checked;
+                frmMain.HookInterface.DumpToFile = frmMain.Settings.DumpToFile = DumpToFile.Checked;
                 frmMain.HookCallback?.InvokeDumpToFileChanged(DumpToFile.Checked);
             }
 
             if (frmMain.HookInterface.SkipCertificateChainVerification != SkipCertificateChainVerification.Checked)
             {
-                frmMain.HookInterface.SkipCertificateChainVerification = SkipCertificateChainVerification.Checked;
+                frmMain.HookInterface.SkipCertificateChainVerification = frmMain.Settings.SkipCertificateChainVerification = SkipCertificateChainVerification.Checked;
                 frmMain.HookCallback?.InvokeSkipChainVerificationChanged(SkipCertificateChainVerification.Checked);
             }
 
             if (DnsChanged)
             {
                 var Dns = GetKeyValuePair(DNSRedirection.Lines);
-                frmMain.HookInterface.DnsRedirection = Dns;
+                frmMain.HookInterface.DnsRedirection = frmMain.Settings.DNSRedirection = Dns;
                 try
                 {
                     frmMain.HookCallback?.InvokeDnsRedirectionChanged(Dns);
@@ -126,7 +126,7 @@ namespace SKYNET
             if (IpChanged)
             {
                 var Ip = GetKeyValuePair(IPRedirection.Lines);
-                frmMain.HookInterface.IPRedirection = Ip;
+                frmMain.HookInterface.IPRedirection = frmMain.Settings.IPRedirection = Ip;
                 try
                 {
                     frmMain.HookCallback?.InvokeIpRedirectionChanged(Ip);
@@ -138,11 +138,22 @@ namespace SKYNET
 
             if (PortChanged)
             {
-                var Port = GetKeyValuePair(PortRedirection.Lines);
-                frmMain.HookInterface.PortRedirection = Port;
+                var ports = GetKeyValuePair(PortRedirection.Lines);
+                var Ports = new ConcurrentDictionary<int, int>();
+                foreach (var item in ports)
+                {
+                    try
+                    {
+                        Ports.TryAdd(int.Parse(item.Key), int.Parse(item.Value));
+                    }
+                    catch 
+                    {
+                    }
+                }
+                frmMain.HookInterface.PortRedirection = frmMain.Settings.PortRedirection = Ports;
                 try
                 {
-                    frmMain.HookCallback?.InvokePortRedirectionChanged(Port);
+                    frmMain.HookCallback?.InvokePortRedirectionChanged(Ports);
                 }
                 catch
                 {
@@ -185,8 +196,7 @@ namespace SKYNET
 
             Close();
         }
-        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
         private ConcurrentDictionary<string, string> GetKeyValuePair(string[] lines)
         {
             ConcurrentDictionary<string, string> KeyValue = new ConcurrentDictionary<string, string>();
@@ -194,7 +204,8 @@ namespace SKYNET
             {
                 if (line.Contains("=") && line.Split('=').Length > 1)
                 {
-                    string[] KV = line.Replace(" =", "=").Replace("= ", "=").Split('=');
+                    var Line = line.Replace(" ", "");
+                    string[] KV = Line.Replace(" =", "=").Replace("= ", "=").Split('=');
                     KeyValue.TryAdd(KV[0], KV[1]);
                 }
             }

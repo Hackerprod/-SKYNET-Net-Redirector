@@ -39,17 +39,17 @@ namespace SKYNET.Hook.Processor
         private int Callback(IntPtr s, string nodename, string servicename, int LocalAddressLength, IntPtr LocalAddress, int RemoteAddressLength, IntPtr RemoteAddress, IntPtr timeout, IntPtr Reserved)
         {
             SOCKADDR_IN addr_in = Marshal.PtrToStructure<SOCKADDR_IN>(RemoteAddress);
-            string originalIp = new IPAddress(addr_in.sin_addr).ToString();
-            string originalPort = Ws2_32.ntohs(addr_in.sin_port).ToString();
+            var originalIp = new IPAddress(addr_in.sin_addr);
+            var originalPort = Ws2_32.ntohs(addr_in.sin_port);
 
-            string RedirectedIP = Main.GetRedirectedIP(originalIp);
-            string RedirectedPort = Main.GetRedirectedPort(originalPort);
+            string RedirectedIP = Main.GetRedirectedIP(originalIp.ToString());
+            var RedirectedPort = Main.GetRedirectedPort(originalPort);
 
             var nAddr = CreateAddr(RedirectedIP, RedirectedPort);
 
             int r = _WSAConnectByNameA(s, nodename, servicename, LocalAddressLength, LocalAddress, RemoteAddressLength, RemoteAddress, timeout, Reserved);
 
-            if (originalIp != RedirectedIP || originalPort != RedirectedPort)
+            if (originalIp.ToString() != RedirectedIP || originalPort != RedirectedPort)
             {
                 Write($"Binding connection from: {originalIp}:{originalPort} to: {RedirectedIP}:{RedirectedPort} [{(((SocketError)Ws2_32.WSAGetLastError()).ToString())}]");
             }

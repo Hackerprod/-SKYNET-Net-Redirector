@@ -24,7 +24,7 @@ namespace SKYNET.Hook.Processor
         [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
         private delegate int ConnectDelegate(IntPtr s, IntPtr addr, int addrsize);
         ConnectDelegate _Connect;
-        public override string Library => "ws2_32.dll"; //WSOCK32.dll
+        public override string Library => "ws2_32.dll"; 
         public override string Method => "connect";
         public override LocalHook Hook { get; set; }
         public override Color Color => ColorTranslator.FromHtml("#00FA00");
@@ -41,15 +41,10 @@ namespace SKYNET.Hook.Processor
         {
             SOCKADDR_IN addr_in = Marshal.PtrToStructure<SOCKADDR_IN>(sockAddr);
             string originalIp = new IPAddress(addr_in.sin_addr).ToString();
-            string originalPort = Ws2_32.ntohs(addr_in.sin_port).ToString();
-
-
-            //SockAddr addr_in = Marshal.PtrToStructure<SockAddr>(sockAddr);
-            //string originalIp = addr_in.IPAddress.ToString();
-            //string originalPort = Ws2_32.ntohs(addr_in.Port).ToString();
+            var originalPort = Ws2_32.ntohs(addr_in.sin_port);
 
             string RedirectedIP = Main.GetRedirectedIP(originalIp);
-            string RedirectedPort = Main.GetRedirectedPort(originalPort);
+            var RedirectedPort = Main.GetRedirectedPort(originalPort);
 
             var nAddr = CreateAddr(RedirectedIP, RedirectedPort);
             Bind();
@@ -69,13 +64,14 @@ namespace SKYNET.Hook.Processor
 
         [DllImport("ws2_32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
         private static extern uint inet_addr(string cp);
-        private IntPtr CreateAddr(string redirectedIP, string redirectedPort)
+
+        private IntPtr CreateAddr(string redirectedIP, int redirectedPort)
         {
             var s = Marshal.AllocHGlobal(16);
             SOCKADDR_IN sockAddr = new SOCKADDR_IN();
             sockAddr.sin_family = (int)AddressFamily.InterNetwork;
             sockAddr.sin_addr = inet_addr(redirectedIP);
-            sockAddr.sin_port = Ws2_32.htons(Convert.ToUInt16(redirectedPort.ToString()));
+            sockAddr.sin_port = Ws2_32.htons((ushort)redirectedPort);
 
             Marshal.StructureToPtr(sockAddr, s, true);
             return s;

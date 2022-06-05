@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SKYNET.Hook;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SKYNET
+namespace SKYNET.Plugin
 {
     public interface IPlugin : IDisposable
     {

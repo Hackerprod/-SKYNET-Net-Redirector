@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using SKYNET.Hook.Types;
-using static System.Net.UnsafeNclNativeMethods;
 
 namespace SKYNET.Helper
 {
@@ -61,11 +60,10 @@ namespace SKYNET.Helper
 
         [DllImport("ws2_32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
         internal static extern SocketError gethostname([Out] StringBuilder hostName, [In] int bufferLength);
+        
         // this should belong to SafeNativeMethods, but it will not for simplicity
         [DllImport("ws2_32.dll", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true)]
-        internal static extern int inet_addr(
-                                          [In] string cp
-                                          );
+        public static extern uint inet_addr([In] string cp);
 
 
 

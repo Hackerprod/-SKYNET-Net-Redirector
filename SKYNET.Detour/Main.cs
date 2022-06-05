@@ -5,21 +5,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using EasyHook;
-using SKYNET.Helper;
 using SKYNET.Hook;
-using SKYNET.Hook.Processor;
-using SKYNET.Hook.Types;
-using SKYNET.Types;
+using SKYNET.Plugin;
 
 namespace SKYNET
 { 
@@ -82,9 +75,6 @@ namespace SKYNET
                 }
 
                 HookManager.Install();
-
-                //CreateInMemoryInterface();
-
             }
             catch (Exception ex)
             {
@@ -108,8 +98,7 @@ namespace SKYNET
 
         private void InstallPlugins()
         {
-            
-            string PluginsDirectory = Path.GetDirectoryName(HookInterface.DllPath) + "/Plugins";
+            string PluginsDirectory = Path.Combine(modCommon.GetPath(), "Data", "Plugins");
             if (Directory.Exists(PluginsDirectory))
             {
                 foreach (var file in Directory.GetFiles(PluginsDirectory, "*.dll"))
@@ -185,7 +174,7 @@ namespace SKYNET
             }
             return originalIP;
         }
-        public static string GetRedirectedPort(string originalPort)
+        public static int GetRedirectedPort(int originalPort)
         {
             foreach (var item in HookInterface.PortRedirection)
             {
@@ -233,7 +222,7 @@ namespace SKYNET
         {
             HookInterface.IPRedirection = IpRedirection;
         }
-        private void HookCallback_PortRedirectionChanged(object sender, ConcurrentDictionary<string, string> PortRedirection)
+        private void HookCallback_PortRedirectionChanged(object sender, ConcurrentDictionary<int, int> PortRedirection)
         {
             HookInterface.PortRedirection = PortRedirection;
         }

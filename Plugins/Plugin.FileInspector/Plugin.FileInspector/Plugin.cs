@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,6 @@ namespace SKYNET
         public Main Main { get; set; }
         public List<IHook> Hooks { get; set; }
 
-        public void Dispose()
-        {
-            
-        }
-
         public void Initialize(Main main, HookInterface @interface)
         {
             Main = main;
@@ -32,16 +28,16 @@ namespace SKYNET
             //Hooks.Add(new WriteFile());
 
             // advapi32.dll
-            //Hooks.Add(new RegCreateKeyExW());
             Hooks.Add(new RegOpenKeyExW());
             Hooks.Add(new RegQueryValueExW());
             Hooks.Add(new RegSetValueExW());
-
-
-
-
-
-
         }
+
+        public void ModuleLoaded(string module)
+        {
+            Main.Write("Plugin", $"Loaded module {module}", Color.BurlyWood);
+        }
+
+
     }
 }

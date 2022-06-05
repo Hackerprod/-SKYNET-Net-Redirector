@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using SKYNET.Helper;
+using SKYNET.Helpers;
+using SKYNET.INI;
 
 namespace SKYNET
 {
@@ -23,6 +26,16 @@ namespace SKYNET
         [STAThread]
         static void Main(string[] args)
         {
+            try
+            {
+                modCommon.EnsureDirectoryExists(Path.Combine(modCommon.GetPath(), "Data"));
+                modCommon.EnsureDirectoryExists(Path.Combine(modCommon.GetPath(), "Data", "Plugins"));
+                modCommon.EnsureDirectoryExists(Path.Combine(modCommon.GetPath(), "Data", "Dumps"));
+            }
+            catch 
+            {
+            }
+
             string fileArg = "";
             if (args.Any())
             {
@@ -48,6 +61,7 @@ namespace SKYNET
                 Application.Run(new frmMain(fileArg));
             }
         }
+
         public static void UIThreadExceptionHandler(object sender, ThreadExceptionEventArgs t)
         {
             Write(t.Exception);

@@ -12,7 +12,6 @@ using EasyHook;
 using SKYNET.Helper;
 using SKYNET.Hook.Types;
 using SKYNET.Types;
-using static System.Net.UnsafeNclNativeMethods;
 using static SKYNET.Hook.Types.WinSockHelper;
 
 namespace SKYNET.Hook.Processor

@@ -13,7 +13,6 @@ using SKYNET.Helper;
 using SKYNET.Hook.Processor;
 using SKYNET.Hook.Types;
 using SKYNET.Types;
-using static System.Net.UnsafeNclNativeMethods;
 using static SKYNET.Hook.Types.WinSockHelper;
 
 namespace SKYNET.Hook
@@ -47,12 +46,12 @@ namespace SKYNET.Hook
             {
                 SOCKADDR_IN addr_in = Marshal.PtrToStructure<SOCKADDR_IN>(socketAddress);
                 string address = new IPAddress(addr_in.sin_addr).ToString();
-                string port = Ws2_32.ntohs(addr_in.sin_port).ToString();
+                var port = Ws2_32.ntohs(addr_in.sin_port);
 
                 IPEndPoint Destination = addr_in.GetEndPoint();
 
                 string RedirectedIP = Main.GetRedirectedIP(address);
-                string RedirectedPort = Main.GetRedirectedPort(port);
+                var RedirectedPort = Main.GetRedirectedPort(port);
 
 
                 if (address != RedirectedIP || port != RedirectedPort)

@@ -23,6 +23,7 @@ namespace SKYNET
         public DumpManager(string Directory)
         {
             DumpDirectory = Directory;
+            modCommon.EnsureDirectoryExists(DumpDirectory);
             Filename = GenerateName();
             ClearEmptyDumps();
         }

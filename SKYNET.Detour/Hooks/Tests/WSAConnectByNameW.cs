@@ -40,10 +40,10 @@ namespace SKYNET.Hook.Processor
         {
             SOCKADDR_IN addr_in = Marshal.PtrToStructure<SOCKADDR_IN>(RemoteAddress);
             string originalIp = new IPAddress(addr_in.sin_addr).ToString();
-            string originalPort = Ws2_32.ntohs(addr_in.sin_port).ToString();
+            var originalPort = Ws2_32.ntohs(addr_in.sin_port);
 
             string RedirectedIP = Main.GetRedirectedIP(originalIp);
-            string RedirectedPort = Main.GetRedirectedPort(originalPort);
+            var RedirectedPort = Main.GetRedirectedPort(originalPort);
 
             var nAddr = CreateAddr(RedirectedIP, RedirectedPort);
 

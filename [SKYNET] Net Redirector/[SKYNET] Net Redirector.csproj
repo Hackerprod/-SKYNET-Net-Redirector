@@ -46,7 +46,11 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="SKYNET.INISerializer, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\INISerializer.1.1.0\lib\net472\SKYNET.INISerializer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.Runtime.Remoting" />
@@ -118,11 +122,11 @@
     <Compile Include="GUI\frmDumps.Designer.cs">
       <DependentUpon>frmDumps.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\frmDumpViewer - Copy.cs">
+    <Compile Include="GUI\frmDumpViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\frmDumpViewer - Copy.Designer.cs">
-      <DependentUpon>frmDumpViewer - Copy.cs</DependentUpon>
+    <Compile Include="GUI\frmDumpViewer.Designer.cs">
+      <DependentUpon>frmDumpViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\frmFunctions.cs">
       <SubType>Form</SubType>
@@ -146,8 +150,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Helpers\RegistrySettings.cs" />
+    <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\ShellManager.cs" />
-    <Compile Include="Helpers\IniParser.cs" />
     <Compile Include="GUI\Controls\SKYNET_ContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -195,16 +199,16 @@
     <Compile Include="IconExtractor\IconExtractor.cs" />
     <Compile Include="IconExtractor\IconUtil.cs" />
     <Compile Include="IconExtractor\NativeMethods.cs" />
-    <Compile Include="MemoryHelper\Additions\ExportTableInfo.cs" />
-    <Compile Include="MemoryHelper\Additions\MemoryIO.cs" />
-    <Compile Include="MemoryHelper\Additions\MemoryManagement.cs" />
-    <Compile Include="MemoryHelper\Additions\ModuleInfo.cs" />
-    <Compile Include="MemoryHelper\Additions\ProcessInfo.cs" />
-    <Compile Include="MemoryHelper\Additions\ProcessUtils.cs" />
-    <Compile Include="MemoryHelper\NativeEnvironment.cs" />
-    <Compile Include="MemoryHelper\NativeMethods.cs" />
-    <Compile Include="MemoryHelper\NativeModule.cs" />
-    <Compile Include="MemoryHelper\NativeProcess.cs" />
+    <Compile Include="NativeSharp\Additions\ExportTableInfo.cs" />
+    <Compile Include="NativeSharp\Additions\MemoryIO.cs" />
+    <Compile Include="NativeSharp\Additions\MemoryManagement.cs" />
+    <Compile Include="NativeSharp\Additions\ModuleInfo.cs" />
+    <Compile Include="NativeSharp\Additions\ProcessInfo.cs" />
+    <Compile Include="NativeSharp\Additions\ProcessUtils.cs" />
+    <Compile Include="NativeSharp\NativeEnvironment.cs" />
+    <Compile Include="NativeSharp\NativeMethods.cs" />
+    <Compile Include="NativeSharp\NativeModule.cs" />
+    <Compile Include="NativeSharp\NativeProcess.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\Controls\HexBox\ReplayEditor.resx">
@@ -237,8 +241,8 @@
     <EmbeddedResource Include="GUI\frmDumps.resx">
       <DependentUpon>frmDumps.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\frmDumpViewer - Copy.resx">
-      <DependentUpon>frmDumpViewer - Copy.cs</DependentUpon>
+    <EmbeddedResource Include="GUI\frmDumpViewer.resx">
+      <DependentUpon>frmDumpViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\frmFunctions.resx">
       <DependentUpon>frmFunctions.cs</DependentUpon>
@@ -289,7 +293,6 @@
     <None Include="Resources\b_Off.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="convertor_pro_udell.ico" />
     <Content Include="EasyHook32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

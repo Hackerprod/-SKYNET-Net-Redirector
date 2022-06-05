@@ -19,15 +19,16 @@ using SKYNET.Controls;
 using SKYNET.Detour.Helpers;
 using SKYNET.GUI;
 using SKYNET.Helper;
+using SKYNET.Helpers;
+using SKYNET.INI;
 using SKYNET.Types;
 
 namespace SKYNET
 {
     public partial class frmMain : frmBase
     {
-        public INIParser IniParser;
         public List<NetMessage> NetMessages;
-        public string _iniPath = "SKYNET.Configuration.ini";
+        public string INIPath;
         public bool WindowsMenuItem;
         public bool AssociateFileExtension;
         public bool RunOnStartup;
@@ -36,10 +37,9 @@ namespace SKYNET
         public static frmMain frm;
         public static HookInterface HookInterface;
         public static HookCallback HookCallback;
-        public static string ExecutablePath;
+        public static Settings Settings;
 
         private string FileArg;
-        private string CommandLines;
         private int ProcessId;
         private string channel;
         public Process InjectedProcess;
@@ -53,6 +53,9 @@ namespace SKYNET
             CheckForIllegalCrossThreadCalls = false;
             base.SetMouseMove(P_Top);
 
+            INIPath = Path.Combine(modCommon.GetPath(), "Data", "SKYNET.Configuration.ini");
+            modCommon.EnsureDirectoryExists(INIPath, true);
+
             RegistrySettings = new RegistrySettings(@"SOFTWARE\SKYNET\[SKYNET] Net Redirector\");
             RegistrySettings.OnKeyEmpty += RegistrySettings_OnKeyEmpty;
             RegistrySettings.OnError += RegistrySettings_OnError;
@@ -64,7 +67,7 @@ namespace SKYNET
             NetMessages = new List<NetMessage>();
             FileArg = fileArg;
 
-            string DumpDirectory = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "Dumps");
+            string DumpDirectory = Path.Combine(modCommon.GetPath(), "Data", "Dumps");
             DumpManager = new DumpManager(DumpDirectory);
 
         }
@@ -74,6 +77,7 @@ namespace SKYNET
 
 
         }
+
         private void RegistrySettings_OnError(object sender, Exception e)
         {
             Write("REGISTRY", e, Color.Red);
@@ -81,30 +85,12 @@ namespace SKYNET
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            //string filePath = @"D:\Música\04. Todo Cambió.mp3";
-
-            //DateTime time1 = DateTime.Now;
-            //FileInfo info = new FileInfo(filePath);
-
-            //TimeSpan span = DateTime.Now - time1;
-            //Write("FILE", $"Size {info.Length}, {span.Milliseconds} milliseconds", Color.Green);
-
-            //DateTime time2 = DateTime.Now;
-            //GetFileSize(filePath, out uint size);
-
-            //TimeSpan span2 = DateTime.Now - time2;
-            //Write("FILE", $"Size {size}, {span2.Milliseconds} milliseconds", Color.Green);
-
-
 
         }
-        [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern uint GetFileSize([MarshalAs(UnmanagedType.LPWStr)] string nodename, out uint lpFileSizeHigh);
 
         private void FrmMain_Shown(object sender, EventArgs e)
         {
             Write("NET REDIRECTOR", "Initializing Net Redirector", Color.White);
-
             Initialize();
         }
 
@@ -112,53 +98,34 @@ namespace SKYNET
         {
             channel = null;
             HookInterface = new HookInterface();
-            _iniPath = Path.Combine(modCommon.GetPath(), _iniPath);
-            if (!File.Exists(_iniPath))
+            INISerializer.OnErrorMessage += INISerializer_OnErrorMessage;
+            if (!File.Exists(INIPath))
             {
                 string Config = CreateConfigurationFile();
 
                 Write("NET REDIRECTOR", "Please configure Settings file", Color.White);
-                Write("NET REDIRECTOR", Config, Color.White);
                 return;
             }
             else
             {
-                IniParser = new INIParser();
-                IniParser.Load(_iniPath);
+                Settings = INISerializer.DeserializeFromFile<Settings>(INIPath);
 
-                ExecutablePath = (string)IniParser["File Configuration"]["Path"];
-                CommandLines = (string)IniParser["File Configuration"]["Arguments"];
-
-                HookInterface.InjectOnStart = (bool)IniParser["Application"]["InjectOnStart"];
-                HookInterface.LoadPlugins = (bool)IniParser["Application"]["LoadPlugins"];
-
-                HookInterface.DumpToConsole = (bool)IniParser["Misc"]["DumpToConsole"];
-                HookInterface.DumpToFile = (bool)IniParser["Misc"]["DumpToFile"];
-                HookInterface.SkipCertificateChainVerification = (bool)IniParser["Misc"]["SkipCertificateChainVerification"];
-
-                if (IniParser["DNS Redirection"] != null && IniParser["DNS Redirection"].Settings.Any())
+                if (Settings == null)
                 {
-                    foreach (var DNS in IniParser["DNS Redirection"].Settings)
-                    {
-                        HookInterface.DnsRedirection.TryAdd(DNS.Key, DNS.Value.ToString().Replace(" ", ""));
-                    }
+                    Write("Settings", "Error loading settings", Color.Red);
+                    return;
                 }
 
-                if (IniParser["IP Redirection"] != null && IniParser["IP Redirection"].Settings.Any())
-                {
-                    foreach (var IP in IniParser["IP Redirection"].Settings)
-                    {
-                        HookInterface.IPRedirection.TryAdd(IP.Key, IP.Value.ToString().Replace(" ", ""));
-                    }
-                }
+                HookInterface.InjectOnStart = Settings.InjectOnStart;
+                HookInterface.LoadPlugins = Settings.LoadPlugins;
 
-                if (IniParser["Port Redirection"] != null && IniParser["Port Redirection"].Settings.Any())
-                {
-                    foreach (var DNS in IniParser["Port Redirection"].Settings)
-                    {
-                        HookInterface.PortRedirection.TryAdd(DNS.Key, DNS.Value.ToString().Replace(" ", ""));
-                    }
-                }
+                HookInterface.DumpToConsole = Settings.DumpToConsole;
+                HookInterface.DumpToFile = Settings.DumpToFile;
+                HookInterface.SkipCertificateChainVerification = Settings.SkipCertificateChainVerification;
+
+                HookInterface.DnsRedirection = Settings.DNSRedirection != null ? Settings.DNSRedirection : new ConcurrentDictionary<string, string>();
+                HookInterface.IPRedirection = Settings.IPRedirection != null ? Settings.IPRedirection : new ConcurrentDictionary<string, string>();
+                HookInterface.PortRedirection = Settings.PortRedirection != null ? Settings.PortRedirection : new ConcurrentDictionary<int, int>();
             }
 
             string dllPath = Path.Combine(modCommon.GetPath(), "SKYNET.Detour.dll");
@@ -188,9 +155,14 @@ namespace SKYNET
             }
             else
             {
-                Write("NET REDIRECTOR", $"Please... press Hook button to start {Path.GetFileName(ExecutablePath)}", Color.White);
+                Write("NET REDIRECTOR", $"Please... press Hook button to start {Path.GetFileName(Settings.Path)}", Color.White);
             }
 
+        }
+
+        private void INISerializer_OnErrorMessage(object sender, string error)
+        {
+            Write("NET REDIRECTOR", error, Color.White);
         }
 
         private void Hook(string executablePath = "")
@@ -202,7 +174,7 @@ namespace SKYNET
                 Executable = executablePath;
             }
             else
-                Executable = ExecutablePath;
+                Executable = Settings.Path;
 
             if (!File.Exists(Executable))
             {
@@ -215,7 +187,7 @@ namespace SKYNET
                 var InObject = WellKnownObjectMode.Singleton;
                 RemoteHooking.IpcCreateServer(ref channel, InObject, HookInterface);
                 HookInterface.ChannelName = channel;
-                RemoteHooking.CreateAndInject(Executable, CommandLines, 0, HookInterface.InjectionOptions, HookInterface.DllPath, HookInterface.DllPath, out ProcessId, HookInterface.ChannelName);
+                RemoteHooking.CreateAndInject(Executable, Settings.Arguments, 0, HookInterface.InjectionOptions, HookInterface.DllPath, HookInterface.DllPath, out ProcessId, HookInterface.ChannelName);
                 InjectedProcess = Process.GetProcessById(ProcessId);
                 Write("NET REDIRECTOR", $"Redirecting network traffic for \"{Path.GetFileName(Executable)}\"", Color.White);
                 WaitForExit();
@@ -270,6 +242,7 @@ namespace SKYNET
         {
             Write(new ConsoleMessage(sender, msg, MessageType.SENDER, color));
         }
+
         private void Write(ConsoleMessage e)
         {
             try
@@ -283,63 +256,34 @@ namespace SKYNET
             {
             }
         }
+
         private string CreateConfigurationFile()
         {
-            StringBuilder config = new StringBuilder();
+            Settings = new Settings()
+            {
+                Path = "",
+                Arguments = "",
+                DNSRedirection = { },
+                IPRedirection = { },
+                PortRedirection = { },
+                InjectOnStart = false,
+                LoadPlugins = true,
+                DumpToConsole = false,
+                DumpToFile = false,
+                SkipCertificateChainVerification = false
+            };
 
-            // File Configuration
+            INISerializer.SerializeToFile(Settings, INIPath);
 
-            config.AppendLine("[File Configuration]");
-            config.AppendLine("Path = ");
-            config.AppendLine("Arguments = ");
-            config.AppendLine();
-
-            // DNS Redirection
-
-            config.AppendLine("[DNS Redirection]");
-            config.AppendLine("# Declare hostnames to be redirected, [* = 127.0.0.1] redirect all DNS hosts to local");
-            config.AppendLine("# Source = Destination");
-            config.AppendLine();
-
-            // IP Redirection
-
-            config.AppendLine("[IP Redirection]");
-            config.AppendLine("# Declare IP to be redirected, [192.168.1.20 = 127.0.0.1]");
-            config.AppendLine("# Source = Destination");
-            config.AppendLine();
-
-            // Port Redirection
-
-            config.AppendLine("[Port Redirection]");
-            config.AppendLine("# Declare port to be redirected, [80 = 8080]");
-            config.AppendLine("# Source = Destination");
-            config.AppendLine();
-
-            // Application
-
-            config.AppendLine("[Application]");
-            config.AppendLine("# Inject automatically when Net Redirector start");
-            config.AppendLine("InjectOnStart = false");
-
-            config.AppendLine("# Load custom plugins stored in Plugins folder");
-            config.AppendLine("LoadPlugins = true");
-            config.AppendLine();
-
-
-            // Misc
-
-            config.AppendLine("[Misc]");
-            config.AppendLine("# Show received and sent packets in console");
-            config.AppendLine("DumpToConsole = false");
-
-            config.AppendLine("# Save received and sent packets in dump file");
-            config.AppendLine("DumpToFile = false");
-
-            config.AppendLine("# Skip verification of certificate chain policy");
-            config.AppendLine("SkipCertificateChainVerification = false");
-
-            File.WriteAllText(_iniPath, config.ToString());
-            return config.ToString();
+            string Content = "";
+            try
+            {
+                Content = File.ReadAllText(INIPath);
+            }
+            catch 
+            {
+            }
+            return Content;
         }
         private void B_Close_Clicked(object sender, EventArgs e)
         {
@@ -350,6 +294,7 @@ namespace SKYNET
         {
             WindowState = FormWindowState.Minimized;
         }
+
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -410,7 +355,7 @@ namespace SKYNET
 
         private void M_ShowInjectedFunctions_Click(object sender, EventArgs e)
         {
-            IniParser.Save();
+            INISerializer.SerializeToFile(Settings, INIPath);
         }
         protected override void OnActivated(EventArgs e)
         {
@@ -429,26 +374,7 @@ namespace SKYNET
         }
         public static void SaveSettings()
         {
-            frm.IniParser["File Configuration"]["Path"] = ExecutablePath;
-            frm.IniParser["Application"]["InjectOnStart"] = HookInterface.InjectOnStart.ToString();
-            frm.IniParser["Application"]["LoadPlugins"] = HookInterface.LoadPlugins.ToString();
-            frm.IniParser["Misc"]["DumpToConsole"] = HookInterface.DumpToConsole.ToString();
-            frm.IniParser["Misc"]["DumpToFile"] = HookInterface.DumpToFile.ToString();
-            frm.IniParser["Misc"]["SkipCertificateChainVerification"] = HookInterface.SkipCertificateChainVerification.ToString();
-            //frm.IniParser.SetProperties("DNS Redirection", HookInterface.DnsRedirection);
-            //frm.IniParser.SetProperties("IP Redirection", HookInterface.IPRedirection);
-            //frm.IniParser.SetProperties("Port Redirection", HookInterface.PortRedirection);
-
-            Section DNS = frm.IniParser["DNS Redirection"];
-            frm.IniParser[DNS] = HookInterface.DnsRedirection;
-
-            Section IP = frm.IniParser["IP Redirection"];
-            frm.IniParser[IP] = HookInterface.IPRedirection;
-
-            Section Port = frm.IniParser["Port Redirection"];
-            frm.IniParser[Port] = HookInterface.PortRedirection;
-
-            frm.IniParser.Save();
+            INISerializer.SerializeToFile(Settings, frm.INIPath);
         }
 
         private void M_Dumps_Click(object sender, EventArgs e)

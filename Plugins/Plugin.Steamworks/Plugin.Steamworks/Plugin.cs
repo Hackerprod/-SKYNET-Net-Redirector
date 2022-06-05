@@ -1,14 +1,98 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using SKYNET.Hook;
-using SKYNET.Hook.Processor;
+﻿<img src="[SKYNET] Net Redirector/Logo.ico" align="right" height="150" width="150" />
+ 
+# [SKYNET] Net Redirector
+[SKYNET] Net Redirector is a network sniffer created to debug the connection of applications and have details of the traffic it generates.
 
-namespace SKYNET
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Hackerprod/-SKYNET-Net-Redirector?style=plastic)
+![GitHub all releases](https://img.shields.io/github/downloads/Hackerprod/-SKYNET-Net-Redirector/total?style=plastic)
+![GitHub](https://img.shields.io/github/issues/Hackerprod/-SKYNET-Net-Redirector)
+
+![Screenshot](screenshot.png)
+
+## 🔗 Features
+```
+DNS forwarding             Redirects a dns to a specified address
+IP Redirect                Redirect an IP address to a specified IP address
+Port forwarding            Redirects a port to a specified port
+Dump traffic               Show traffic payload in console or save it to file.
+Plugin system              Load external plugin to implement new features.
+```
+
+## 🔗 Hooked functions
+
+| Library | Function |
+|----------|------------ |
+| crypt32.dll | CertVerifyCertificateChainPolicy |
+| kernel32.dll | CreateProcessA |
+|  | CreateProcessW |
+| ntdll.dll | LdrLoadDll |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+| xxx | xxx |
+
+```
+crypt32.dll                CertVerifyCertificateChainPolicy
+kernel32.dll               CreateProcessA
+kernel32.dll               CreateProcessW
+ntdll.dll                  LdrLoadDll
+ws2_32.dll                 connect
+ws2_32.dll                 getaddrinfo
+ws2_32.dll                 GetAddrInfoExA
+ws2_32.dll                 GetAddrInfoExW
+ws2_32.dll                 GetAddrInfoW
+ws2_32.dll                 gethostbyname
+ws2_32.dll                 socket
+ws2_32.dll                 recv
+ws2_32.dll                 send
+ws2_32.dll                 sendto
+ws2_32.dll                 connect
+ws2_32.dll                 listen
+ws2_32.dll                 recvfrom
+ws2_32.dll                 WSAConnectByNameA
+ws2_32.dll                 WSAConnectByNameW
+ws2_32.dll                 WSAConnect
+ws2_32.dll                 WSASocketW
+ws2_32.dll                 WSARecv
+ws2_32.dll                 WSARecvFrom
+ws2_32.dll                 WSASend
+ws2_32.dll                 WSASendTo
+```
+
+## 🔌 Plugin system
+The plugin system is designed to add features to the program, the following example shows a basic plugin. <br /><br />
+
+**Interface for plugin:**
+```csharp
+namespace SKYNET.Plugin
+{
+    public interface IPlugin : IDisposable
+    {
+        HookInterface HookInterface { get; set; }
+        Main Main { get; set; }
+        List<IHook> Hooks { get; set; }
+        void Initialize(Main main, HookInterface @interface);
+        void ModuleLoaded(string module);
+    }
+}
+```
+**Plugin example:**
+```csharp
+namespace SKYNET.Plugin
 {
     public class Plugin : IPlugin
     {
@@ -16,44 +100,77 @@ namespace SKYNET
         public Main Main { get; set; }
         public List<IHook> Hooks { get; set; }
 
-        public static bool Initialized;
-
-        private SteamAPI _SteamAPI;
-
-        public void Dispose()
-        {
-            
-        }
-
-        public void Initialize(Main main, HookInterface Interface)
+        public void Initialize(Main main, HookInterface @interface)
         {
             Main = main;
-            HookInterface = Interface;
+            HookInterface = @interface;
             Hooks = new List<IHook>();
 
-            Write("Creating steamworks hooks ");
-            Initialized = false;
-
-            _SteamAPI = new SteamAPI();
+            Hooks.Add(new ReadFile());
         }
 
         public void ModuleLoaded(string module)
         {
-            if (module.StartsWith("STEAM_API"))
-            {
-                Write("dddddddddddddddddddddd");
-                _SteamAPI.Initialize();
-            }
-            //_SteamAPI.Initialize();
+            Main.Write("Plugin", $"Loaded module {module}", Color.BurlyWood);
         }
-        public static void Write(object Msg)
+
+        public void Dispose()
         {
-            if (Msg.ToString() != _lastMsg)
-            {
-                Main.Write("STEAMWORKS", $"{Msg}", Color.BurlyWood);
-                _lastMsg = Msg.ToString();
-            }
+            // TODO:
         }
-        private static string _lastMsg;
     }
 }
+```
+
+```csharp
+namespace SKYNET.Hook
+{
+    public class ReadFile : IHook
+    {
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
+        private delegate bool ReadFileDelegate(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+        private ReadFileDelegate _ReadFile;
+
+        public override string Library => "kernel32.dll";
+        public override string Method => "ReadFile";
+        public override LocalHook Hook { get; set; }
+        public override Color Color => ColorTranslator.FromHtml("#FF33B4");
+
+        public override Delegate Delegate
+        {
+            get
+            {
+                _ReadFile = Marshal.GetDelegateForFunctionPointer<ReadFileDelegate>(ProcAddress);
+                return new ReadFileDelegate(Callback);
+            }
+        }
+
+        private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped)
+        {
+            bool result = _ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, out lpNumberOfBytesRead, lpOverlapped);
+
+            try
+            {
+                StringBuilder filename = new StringBuilder(255);
+                GetFinalPathNameByHandle(hFile, filename, 255, 0);
+
+                if (string.IsNullOrEmpty(filename.ToString()))
+                {
+                    return result;
+                }
+                string file = filename.ToString().Replace(@"\\?\", "");
+                string Message = $"Reading file {file}";
+                Write(Message);
+            }
+            catch 
+            {
+            }
+            return result;
+        }
+
+        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
+
+    }
+}
+```
