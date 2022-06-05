@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using EasyHook;
 
 namespace SKYNET.Hook
@@ -30,36 +25,21 @@ namespace SKYNET.Hook
             }
         }
 
-        string lastMessage = "";
         private bool Callback(IntPtr hFile, IntPtr lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, IntPtr lpOverlapped)
         {
-            bool result = _WriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, out lpNumberOfBytesWritten, lpOverlapped);
+            bool result = false;
+
+            result = _WriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, out lpNumberOfBytesWritten, lpOverlapped);
+
             try
             {
-                string text = Marshal.PtrToStringAnsi(hFile);
-
                 StringBuilder filename = new StringBuilder(255);
                 GetFinalPathNameByHandle(hFile, filename, 255, 0);
 
                 string file = filename.ToString().Replace(@"\\?\", "");
-                string Message = $"Writing {file}, {nNumberOfBytesToWrite} bytes";
-                if (Message != lastMessage)
+                if (!string.IsNullOrEmpty(file))
                 {
-                    if (string.IsNullOrEmpty(file))
-                    {
-                        return result;
-                    }
-                    if (lpNumberOfBytesWritten > 2048)
-                    {
-                        Write(Message);
-                    }
-                    else
-                    {
-                        byte[] array = GetBytes(lpBuffer, (int)lpNumberOfBytesWritten);
-                        Write(Message + "\n" + Encoding.Default.GetString(array));
-
-                    }
-                    lastMessage = Message;
+                    Write($"Writing {file}, {LongToMbytes(nNumberOfBytesToWrite)}");
                 }
             }
             catch
@@ -68,14 +48,36 @@ namespace SKYNET.Hook
 
             return result;
         }
+
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
-        public static byte[] GetBytes(IntPtr buffer, int length)
+
+        public static string LongToMbytes(long lBytes)
         {
-            byte[] array = new byte[length];
-            Marshal.Copy(buffer, array, 0, length);
-            return array;
+            StringBuilder stringBuilder = new StringBuilder();
+            string str1 = "Bytes";
+            if (lBytes > 1024L)
+            {
+                string str2;
+                float num;
+                if (lBytes < 1048576L)
+                {
+                    str2 = "KB";
+                    num = Convert.ToSingle(lBytes) / 1024f;
+                }
+                else
+                {
+                    str2 = "MB";
+                    num = Convert.ToSingle(lBytes) / 1048576f;
+                }
+                stringBuilder.AppendFormat("{0:0.0} {1}", (object)num, (object)str2);
+            }
+            else
+            {
+                float num = Convert.ToSingle(lBytes);
+                stringBuilder.AppendFormat("{0:0} {1}", (object)num, (object)str1);
+            }
+            return stringBuilder.ToString();
         }
     }
-
 }

@@ -30,7 +30,7 @@ namespace SKYNET.Plugin
             //Hooks.Add(new CreateFileW());
 
             Hooks.Add(new ReadFile());
-            //Hooks.Add(new WriteFile());
+            Hooks.Add(new WriteFile());
 
             // advapi32.dll
             Hooks.Add(new RegOpenKeyExW());
